@@ -1,0 +1,1560 @@
+/* =========================================================
+   FONTS
+   Self-hosted, Latin subset, variable woff2 (OFL licensed).
+   Fallbacks use metric overrides to reduce layout shift on swap.
+   ========================================================= */
+
+@font-face {
+    font-family: "Archivo";
+    src: url("../assets/fonts/archivo-variable-latin.woff2") format("woff2");
+    font-weight: 100 900;
+    font-stretch: 62% 125%;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Martian Mono";
+    src: url("../assets/fonts/martian-mono-variable-latin.woff2") format("woff2");
+    font-weight: 100 800;
+    font-stretch: 75% 112.5%;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Archivo Fallback";
+    src: local("Arial");
+    size-adjust: 99.2%;
+    ascent-override: 88.51%;
+    descent-override: 21.17%;
+    line-gap-override: 0%;
+}
+
+@font-face {
+    font-family: "Martian Mono Fallback";
+    src: local("Courier New");
+    size-adjust: 116.65%;
+    ascent-override: 85.73%;
+    descent-override: 17.15%;
+    line-gap-override: 0%;
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Anchor jumps and keyboard focus stop below the sticky header */
+html {
+    scroll-padding-top: calc(var(--header-height) + var(--space-sm));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    html {
+        scroll-behavior: smooth;
+    }
+}
+
+body {
+    background: var(--color-bg);
+    color: var(--color-text);
+
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    line-height: var(--leading-body);
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button,
+input,
+textarea {
+    font: inherit;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+:focus-visible {
+    outline: 2px solid var(--color-signal);
+    outline-offset: 3px;
+}
+
+/* Paper grain: a tiny SVG noise tile fixed over the page, like printed
+   stock. Its own compositor layer, so scrolling doesn't repaint it. */
+body::after {
+    content: "";
+
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+
+    pointer-events: none;
+
+    opacity: 0.045;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1.4 -0.2'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+@media (forced-colors: active) {
+    body::after {
+        display: none;
+    }
+}
+
+
+/* =========================================================
+   DESIGN TOKENS
+   ========================================================= */
+
+:root {
+
+    color-scheme: dark;
+
+    /* Colors — "Two-Ink Poster": black paper, light ink, red ink.
+       Red is ink for large surfaces and states, never a small decoration */
+    --color-bg: #0a0a0a;
+    --color-text: #efeae0;
+    --color-text-muted: #8f8b85;
+    --color-line: #262422;
+
+    /* Signal: input, output and interaction only — never decoration */
+    --color-signal: #ff2a1a;
+
+    /* Layout
+       Breakpoints are content-driven and documented here because
+       custom properties can't be used inside @media:
+       600px  — footer switches to a row · hero width axis 85%
+       1024px — 12-column grids activate · hero width axis 100% */
+    --content-max: 1400px;
+    --gutter: clamp(1.25rem, 1.036rem + 1.071vw, 2rem);
+
+    /* Spacing — fluid, same 320px → 1440px range as the type scale */
+    --space-xs: 0.5rem;
+    --space-sm: clamp(0.75rem, 0.6786rem + 0.3571vw, 1rem);
+    --space-md: clamp(1.5rem, 1.357rem + 0.7143vw, 2rem);
+    --space-lg: clamp(2.5rem, 2.071rem + 2.143vw, 4rem);
+    --space-xl: clamp(4rem, 3rem + 5vw, 7.5rem);
+
+    /* Typography — families (by role, so a role can change family later) */
+    --font-body: "Archivo", "Archivo Fallback", Arial, sans-serif;
+    --font-display: "Archivo", "Archivo Fallback", Arial, sans-serif;
+    --font-mono: "Martian Mono", "Martian Mono Fallback", "Courier New", monospace;
+
+    /* Typography — fluid modular scale
+       Viewport 320px → 1440px · base 16px → 18px
+       Ratio 1.2 (minor third) → 1.333 (perfect fourth)
+       Every step keeps max ≤ 2.5 × min, so browser zoom still
+       enlarges text enough to pass WCAG 1.4.4 (Resize Text).
+       Unused steps, add when needed: 2 = 23→32px · 3 = 28→43px · 4 = 33→57px */
+    --text-meta: 0.875rem;
+    --text-body: clamp(1rem, 0.9643rem + 0.1786vw, 1.125rem);
+    --text-lead: clamp(1.2rem, 1.114rem + 0.428vw, 1.5rem);
+    --text-section: clamp(2.488rem, 1.846rem + 3.209vw, 4.735rem);
+    --text-project: clamp(2.986rem, 2.036rem + 4.751vw, 6.312rem);
+    --text-hero: clamp(5.75rem, 3.286rem + 12.32vw, 14.38rem);
+    /* Poster display sizes, each within the 2.5× rule */
+    --text-subhead: clamp(2.074rem, 1.651rem + 2.112vw, 3.552rem);
+    --text-poster: clamp(4.5rem, 2.643rem + 9.286vw, 11rem);
+    --text-headliner: clamp(4.75rem, 2.714rem + 10.18vw, 11.875rem);
+    --text-email: clamp(3.25rem, 2.25rem + 5vw, 8.125rem);
+
+    /* Typography — line height */
+    --leading-tight: 0.85;
+    --leading-snug: 0.95;
+    --leading-body: 1.5;
+
+    /* Motion — every use sits inside prefers-reduced-motion: no-preference
+       fast: hover and underline feedback
+       base: panels and page-to-page transitions
+       slow: the single signature moment (hero entrance) */
+    --duration-fast: 150ms;
+    --duration-base: 300ms;
+    --duration-slow: 700ms;
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+    /* Header: top padding + navbar height (used by sticky offsets) */
+    --header-height: calc(var(--space-md) + 3.75rem);
+
+}
+
+
+/* =========================================================
+   GLOBAL LAYOUT
+   ========================================================= */
+
+/* Named lines: sections sit in "content" by default;
+   a section that needs to bleed edge to edge uses grid-column: full */
+main {
+    display: grid;
+    grid-template-columns:
+        [full-start] minmax(var(--gutter), 1fr)
+        [content-start] min(100% - 2 * var(--gutter), var(--content-max))
+        [content-end] minmax(var(--gutter), 1fr)
+        [full-end];
+}
+
+main > * {
+    grid-column: content;
+}
+
+/* Same formula as main's content track, so edges align to the pixel */
+.site-footer {
+    width: min(100% - 2 * var(--gutter), var(--content-max));
+    margin-inline: auto;
+}
+
+/* The sticky header needs a full-width background, so it spans the
+   viewport and pads its content to the exact same edges instead */
+.site-header {
+    padding-inline: max(var(--gutter), (100% - var(--content-max)) / 2);
+}
+
+
+/* =========================================================
+   UTILITIES
+   ========================================================= */
+
+.visually-hidden {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+
+    border: 0;
+}
+
+
+/* =========================================================
+   SKIP LINK
+   ========================================================= */
+
+.skip-link {
+    position: absolute;
+    top: var(--space-sm);
+    left: var(--space-sm);
+    z-index: 100;
+
+    padding: var(--space-xs) var(--space-sm);
+
+    background: var(--color-text);
+    color: var(--color-bg);
+
+    font-size: var(--text-meta);
+
+    transform: translateY(-200%);
+}
+
+.skip-link:focus {
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   META LIST
+   Shared <dl> pattern for label/value facts (hero, About)
+   ========================================================= */
+
+.meta-list {
+    display: grid;
+    gap: var(--space-xs);
+
+    font-size: var(--text-meta);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Each pair is a row: label column, value column (extra <dd>s stack) */
+.meta-list > div {
+    display: grid;
+    grid-template-columns: 7rem minmax(0, 1fr);
+    column-gap: var(--space-sm);
+}
+
+.meta-list dt {
+    color: var(--color-text-muted);
+    font-stretch: 85%;
+}
+
+.meta-list dd {
+    grid-column: 2;
+}
+
+
+/* =========================================================
+   CTA LINK
+   Shared standalone call-to-action link (hero, projects)
+   ========================================================= */
+
+.cta-link {
+    min-block-size: 44px;
+
+    display: inline-flex;
+    align-items: center;
+
+    font-weight: 600;
+
+    text-decoration-line: underline;
+    text-decoration-color: var(--color-signal);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.3em;
+}
+
+@media (hover: hover) {
+    .cta-link:hover {
+        text-decoration-thickness: 4px;
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .cta-link {
+        transition: text-decoration-thickness var(--duration-fast) var(--ease-out);
+    }
+}
+
+/* A real <button> that looks like the CTA link (copy email, pause motion) */
+.link-button {
+    padding: 0;
+
+    border: 0;
+    background: none;
+    color: var(--color-text);
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   PROSE
+   Long-form text: readable measure and paragraph rhythm
+   ========================================================= */
+
+.prose {
+    max-inline-size: 65ch;
+}
+
+.prose > * + * {
+    margin-top: var(--space-sm);
+}
+
+.prose > .cta-link {
+    margin-top: var(--space-md);
+}
+
+
+/* =========================================================
+   PAGE TRANSITIONS
+   Cross-document View Transitions: moving between the home and a
+   case study animates elements that share a view-transition-name
+   (the project title morphs from the card into the page heading).
+   Browsers without support simply navigate as usual.
+   ========================================================= */
+
+@media (prefers-reduced-motion: no-preference) {
+    @view-transition {
+        navigation: auto;
+    }
+
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+        animation-duration: var(--duration-base);
+        animation-timing-function: var(--ease-out);
+    }
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+/* Sticky header. Without JS it simply stays visible.
+   js/modules/header-visibility.js sets [data-header-hidden] while
+   scrolling down and removes it when scrolling up. Only the hidden state
+   sets a transform: any transform on an ancestor would break the
+   position: fixed mobile panel inside it. */
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+
+    padding-top: var(--space-md);
+
+    background: var(--color-bg);
+
+    view-transition-name: site-header;
+}
+
+.site-header[data-header-hidden] {
+    transform: translateY(-100%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .site-header {
+        transition: transform var(--duration-base) var(--ease-out);
+    }
+}
+
+.navbar {
+    min-block-size: 3.75rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+}
+
+.logo {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-stretch: 75%;
+    font-weight: 800;
+}
+
+.nav-links {
+    display: flex;
+    gap: var(--space-sm);
+
+    list-style: none;
+}
+
+.nav-links a,
+.menu-toggle {
+    color: var(--color-text-muted);
+    font-size: var(--text-meta);
+}
+
+.nav-links a,
+.footer-links a {
+    min-height: 44px;
+
+    display: inline-flex;
+    align-items: center;
+}
+
+.menu-toggle {
+    min-block-size: 44px;
+    padding: 0;
+
+    border: 0;
+    background: transparent;
+    color: var(--color-text);
+
+    cursor: pointer;
+}
+
+/* ---------------------------------------------------------
+   Mobile menu (progressive enhancement)
+   Without JS the list stays visible and the button stays [hidden].
+   js/modules/mobile-nav.js unhides the button and sets [data-nav-ready];
+   only then does the list collapse. All open/closed styling reads the
+   button's aria-expanded state, so visuals can't drift from semantics.
+   --------------------------------------------------------- */
+
+.nav-links a[aria-current] {
+    color: var(--color-text);
+
+    text-decoration-line: underline;
+    text-decoration-color: var(--color-signal);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.35em;
+}
+
+@media (width < 600px) {
+    /* Collapsed panel: already positioned as the full-screen overlay, so
+       closing only animates visibility and never flashes the inline list */
+    .navbar[data-nav-ready] .nav-links {
+        position: fixed;
+        inset: 0;
+        z-index: 10;
+
+        display: none;
+        flex-direction: column;
+        gap: var(--space-xs);
+
+        padding: calc(var(--header-height) + var(--space-lg)) var(--gutter) var(--space-lg);
+
+        background: var(--color-bg);
+
+        opacity: 0;
+        clip-path: inset(0 0 100% 0);
+    }
+
+    .menu-toggle[aria-expanded="true"] {
+        color: var(--color-signal);
+    }
+
+    /* Open */
+    .navbar[data-nav-ready] .menu-toggle[aria-expanded="true"] + .nav-links {
+        display: flex;
+
+        opacity: 1;
+        clip-path: inset(0);
+    }
+
+    .navbar[data-nav-ready] .nav-links a {
+        color: var(--color-text);
+
+        font-family: var(--font-display);
+        font-size: var(--text-section);
+        font-stretch: 75%;
+        font-weight: 800;
+    }
+
+    .navbar[data-nav-ready] .nav-links a[aria-current] {
+        color: var(--color-signal);
+    }
+
+    .navbar[data-nav-ready] .logo,
+    .navbar[data-nav-ready] .menu-toggle {
+        position: relative;
+        z-index: 11;
+    }
+
+    /* Lock background scroll while the panel is open */
+    html:has(.menu-toggle[aria-expanded="true"]) {
+        overflow: hidden;
+    }
+}
+
+/* The panel drops from the top like a stage curtain.
+   allow-discrete lets display: none/flex take part in the transition,
+   and @starting-style gives the opening animation a start point. */
+@media (width < 600px) and (prefers-reduced-motion: no-preference) {
+    .navbar[data-nav-ready] .nav-links {
+        transition:
+            opacity var(--duration-base) var(--ease-out),
+            clip-path var(--duration-base) var(--ease-out),
+            display var(--duration-base) allow-discrete;
+    }
+
+    @starting-style {
+        .navbar[data-nav-ready] .menu-toggle[aria-expanded="true"] + .nav-links {
+            opacity: 0;
+            clip-path: inset(0 0 100% 0);
+        }
+    }
+}
+
+@media (width >= 600px) {
+    .menu-toggle {
+        display: none;
+    }
+}
+
+
+/* =========================================================
+   PRINT PLATES (shared: hero name, headliner, case study title)
+   A two-ink screenprint: a red plate printed slightly off register
+   behind the light ink. The red plate is generated content drawn from
+   data-text, so the text exists once in the document (search engines,
+   copy/paste) and the empty alt text keeps screen readers from reading it.
+   ========================================================= */
+
+.print {
+    position: relative;
+    isolation: isolate;
+}
+
+.print::before {
+    content: attr(data-text);
+    content: attr(data-text) / "";
+
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+
+    padding: inherit;
+
+    color: var(--color-signal);
+
+    transform: translate(0.035em, 0.03em);
+
+    pointer-events: none;
+    user-select: none;
+}
+
+.nowrap {
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+/* Poster composition: the name fills the top; below it, the role on the
+   left (1–7) and a side column (9–12) with description, facts and CTA */
+.hero {
+    min-block-size: 80vh;
+    min-block-size: 80svh;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    row-gap: var(--space-lg);
+
+    padding-block: var(--space-md) var(--space-xl);
+
+    /* The offset red plate may overhang the column; clip it without
+       creating a scroll container */
+    overflow-x: clip;
+}
+
+@media (min-width: 1024px) {
+    .hero {
+        min-block-size: 85vh;
+        min-block-size: 85svh;
+
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        grid-template-rows: auto auto;
+        align-content: space-between;
+        column-gap: var(--space-md);
+        row-gap: var(--space-md);
+    }
+
+    /* Subgrid on both axes: the role stays inside the <h1> (semantics)
+       yet shares row 2 with the side column (layout).
+       display: contents was avoided: it has dropped heading semantics
+       in screen readers for years. */
+    .hero-title {
+        grid-column: 1 / -1;
+        grid-row: 1 / 3;
+
+        display: grid;
+        grid-template-columns: subgrid;
+        grid-template-rows: subgrid;
+    }
+
+    .hero-name {
+        grid-column: 1 / -1;
+        grid-row: 1;
+    }
+
+    .hero-role {
+        grid-column: 1 / 8;
+        grid-row: 2;
+        align-self: end;
+    }
+
+    .hero-side {
+        grid-column: 9 / -1;
+        grid-row: 2;
+        align-self: end;
+    }
+}
+
+.hero-title {
+    font-family: var(--font-display);
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.hero-name {
+    position: relative;
+
+    display: block;
+
+    font-size: var(--text-hero);
+    font-stretch: 62%;
+    line-height: 0.8;
+}
+
+.hero-name-line {
+    display: block;
+}
+
+/* font-stretch can't mix % with vw, so the width axis steps up
+   at breakpoints while font-size stays fluid */
+@media (min-width: 600px) {
+    .hero-name {
+        font-stretch: 75%;
+    }
+}
+
+/* On short desktop screens the name is also capped by viewport height,
+   so the whole hero fits the first screen (e.g. 1366×657, 1536×686).
+   Desktop-only: at 200% zoom a laptop falls below 1024px CSS width and
+   the mobile rule (which scales with zoom) applies, so WCAG 1.4.4 holds. */
+@media (min-width: 1024px) {
+    .hero-name {
+        font-size: min(var(--text-hero), 25svh);
+        font-stretch: 85%;
+    }
+}
+
+.hero-role {
+    display: block;
+    margin-top: var(--space-md);
+
+    font-size: var(--text-subhead);
+    font-stretch: 80%;
+    font-weight: 800;
+    line-height: var(--leading-snug);
+    text-wrap: balance;
+}
+
+@media (min-width: 1024px) {
+    .hero-role {
+        margin-top: 0;
+    }
+}
+
+.hero-side {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-md);
+}
+
+.hero-description {
+    max-inline-size: 34ch;
+
+    color: var(--color-text-muted);
+}
+
+/* Signature moment. The red plate slides into register while the light
+   ink sweeps in left to right, then the role follows. clip-path and
+   transform don't trigger layout, so there is no layout shift. The
+   negative insets leave room for glyph overshoot, and fill-mode
+   backwards removes the clip entirely once it's done. */
+@media (prefers-reduced-motion: no-preference) {
+    .hero-name-line::before {
+        animation: plate-in 1100ms var(--ease-out) backwards;
+    }
+
+    .hero-name-line,
+    .hero-role {
+        animation: ink-sweep var(--duration-slow) var(--ease-out) backwards;
+    }
+
+    .hero-name-line {
+        animation-delay: 180ms;
+    }
+
+    .hero-name-line + .hero-name-line {
+        animation-delay: 300ms;
+    }
+
+    .hero-role {
+        animation-delay: 480ms;
+    }
+}
+
+@keyframes plate-in {
+    from {
+        opacity: 0;
+        transform: translate(0.2em, 0.12em);
+    }
+}
+
+@keyframes ink-sweep {
+    from {
+        clip-path: inset(-0.2em 100% -0.2em 0);
+    }
+
+    to {
+        clip-path: inset(-0.2em -0.1em -0.2em 0);
+    }
+}
+
+
+/* =========================================================
+   POSTER TITLES (About, Skills)
+   ========================================================= */
+
+.poster-title {
+    font-family: var(--font-display);
+    font-size: var(--text-poster);
+    font-stretch: 70%;
+    font-weight: 900;
+    line-height: 0.8;
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   SECTIONS (long-form pages: case study)
+   ========================================================= */
+
+.section {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-md);
+
+    padding-block: var(--space-xl) 0;
+}
+
+/* The heading sits in a rail (1–4) and stays there while you read the
+   section. Sticky is bounded by the section, so it never leaves it. */
+@media (min-width: 1024px) {
+    .section {
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        column-gap: var(--space-md);
+        align-items: baseline;
+    }
+
+    .section-label {
+        grid-column: 1 / 5;
+
+        position: sticky;
+        top: calc(var(--header-height) + var(--space-md));
+    }
+
+    .section-content {
+        grid-column: 5 / 13;
+    }
+}
+
+.section-label {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-stretch: 80%;
+    font-weight: 800;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   ABOUT
+   ========================================================= */
+
+.about {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-lg);
+
+    padding-block: var(--space-xl);
+}
+
+/* Base before the media query: same specificity, so order decides */
+.about-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    row-gap: var(--space-lg);
+}
+
+/* The title is red ink printed vertically along the left edge */
+.edge-title {
+    color: var(--color-signal);
+}
+
+@media (min-width: 1024px) {
+    .about {
+        grid-template-columns: auto minmax(0, 1fr);
+        column-gap: var(--space-lg);
+    }
+
+    .edge-title {
+        align-self: start;
+
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+    }
+
+    .about-body {
+        grid-template-columns: repeat(9, minmax(0, 1fr));
+        column-gap: var(--space-md);
+    }
+
+    .about-pull {
+        grid-column: 1 / -1;
+    }
+
+    .about-text {
+        grid-column: 1 / 6;
+    }
+
+    .about-facts {
+        grid-column: 7 / -1;
+        align-self: start;
+    }
+}
+
+.about-pull {
+    max-inline-size: 16ch;
+
+    font-family: var(--font-display);
+    font-size: var(--text-section);
+    font-stretch: 75%;
+    font-weight: 800;
+    line-height: 0.92;
+    text-wrap: balance;
+}
+
+.about-text {
+    max-inline-size: 58ch;
+
+    color: var(--color-text-muted);
+    font-size: var(--text-lead);
+}
+
+
+/* =========================================================
+   SKILLS
+   ========================================================= */
+
+.skills {
+    padding-block: var(--space-xl);
+}
+
+.skills-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: var(--space-sm);
+
+    margin-bottom: var(--space-lg);
+}
+
+/* Outline type: the stroke carries the contrast (16:1 against the paper).
+   Forced-colors mode replaces color with a system color, so it stays legible. */
+.outline-title {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--color-text);
+}
+
+@supports not (-webkit-text-stroke: 1px) {
+    .outline-title {
+        color: var(--color-text);
+    }
+}
+
+.skill-levels {
+    display: grid;
+    gap: var(--space-lg);
+}
+
+.skill-group-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-xs) var(--space-sm);
+
+    padding-bottom: var(--space-sm);
+    margin-bottom: var(--space-sm);
+
+    border-bottom: 1px solid var(--color-line);
+}
+
+.skill-group h3 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-stretch: 80%;
+    font-weight: 800;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.skill-note {
+    color: var(--color-text-muted);
+}
+
+.skill-note a {
+    text-decoration-line: underline;
+    text-decoration-color: var(--color-signal);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.25em;
+}
+
+/* One technology per cell, no separators. The minimum is in rem, so every
+   group gets the same columns and they line up across levels.
+   On narrow screens the minimum drops to half the width: two columns. */
+.skill-list {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fill, minmax(min(10.5rem, calc(50% - var(--space-sm) / 2)), 1fr));
+    gap: var(--space-xs) var(--space-sm);
+
+    list-style: none;
+
+    color: var(--color-text);
+    font-size: var(--text-lead);
+}
+
+.skill-list-exploring {
+    color: var(--color-text-muted);
+    font-size: var(--text-body);
+}
+
+/* ---------------------------------------------------------
+   Floating bubbles (js/modules/skill-bubbles.js)
+   Enhancement only: without JS, or with reduced motion, the grid above
+   stays. The DOM order is untouched, so reading order never changes.
+   The script positions each <li> with transform (no layout per frame)
+   and wraps its text in .bubble, which handles hover and the entrance.
+   --------------------------------------------------------- */
+
+.motion-control {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.skill-list[data-bubbles-ready] {
+    position: relative;
+
+    display: block;
+}
+
+.skill-list[data-bubbles-ready] > li {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    will-change: transform;
+}
+
+.bubble {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 0.35em 0.9em;
+
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    background: var(--color-bg);
+
+    white-space: nowrap;
+}
+
+@media (hover: hover) {
+    /* Hovered bubble stops (in JS), grows and lights up: interaction = signal */
+    .skill-list[data-bubbles-ready] > li:hover {
+        z-index: 1;
+    }
+
+    .skill-list[data-bubbles-ready] > li:hover .bubble {
+        border-color: var(--color-signal);
+        transform: scale(1.08);
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .bubble {
+        transition:
+            border-color var(--duration-fast) var(--ease-out),
+            transform var(--duration-base) var(--ease-out);
+    }
+}
+
+
+/* =========================================================
+   SELECTED WORK
+   Full-bleed: the section spans main's [full] lines and passes them down
+   with subgrid, so the headliner runs edge to edge while everything else
+   stays aligned to [content].
+   ========================================================= */
+
+.work,
+.project-card {
+    grid-column: full;
+
+    display: grid;
+    grid-template-columns: subgrid;
+}
+
+.work > *,
+.project-card > * {
+    grid-column: content;
+}
+
+.work {
+    padding-top: var(--space-xl);
+
+    overflow-x: clip;
+}
+
+.work-heading {
+    margin-bottom: var(--space-sm);
+
+    color: var(--color-text-muted);
+
+    font-size: var(--text-body);
+    font-weight: 400;
+}
+
+/* The headliner: widest width on large screens, like top billing.
+   Sizes follow the 2.5× zoom rule; the width axis steps up instead. */
+.headliner {
+    position: relative;
+
+    padding-inline: calc(var(--gutter) * 0.4);
+
+    font-family: var(--font-display);
+    font-size: var(--text-headliner);
+    font-stretch: 62%;
+    font-weight: 900;
+    line-height: 0.78;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.project-card > .headliner {
+    grid-column: full;
+}
+
+@media (min-width: 600px) {
+    .headliner {
+        font-stretch: 85%;
+    }
+}
+
+@media (min-width: 1024px) {
+    .headliner {
+        font-stretch: 112%;
+    }
+}
+
+/* Second animation: the red plate comes into register as the headliner
+   scrolls into view, driven by scroll position (not time), so it's never
+   continuous. The headliner names its view timeline and the ::before plate
+   follows it. Browsers without scroll-driven animations show it registered. */
+@supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .headliner {
+            view-timeline-name: --headliner;
+        }
+
+        .headliner::before {
+            animation: plate-register linear both;
+            animation-timeline: --headliner;
+            animation-range: entry 0% cover 45%;
+        }
+    }
+}
+
+@keyframes plate-register {
+    from {
+        transform: translate(0.24em, 0.16em);
+    }
+
+    to {
+        transform: translate(0.035em, 0.03em);
+    }
+}
+
+.project-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-lg);
+
+    margin-top: var(--space-md);
+    padding-block: var(--space-md) var(--space-xl);
+
+    border-top: 1px solid var(--color-line);
+}
+
+@media (min-width: 1024px) {
+    .project-body {
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        column-gap: var(--space-md);
+    }
+
+    .project-summary {
+        grid-column: 1 / 7;
+    }
+
+    .project-facts {
+        grid-column: 8 / -1;
+    }
+}
+
+.project-summary {
+    display: grid;
+    justify-items: start;
+    align-content: start;
+    gap: var(--space-md);
+}
+
+.project-description {
+    max-inline-size: 34ch;
+
+    font-size: var(--text-lead);
+    line-height: 1.35;
+}
+
+/* Technical data is the one place mono stays */
+.stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+
+    list-style: none;
+
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+}
+
+.stack li {
+    padding: 0.2em 0.55em;
+
+    border: 1px solid var(--color-line);
+}
+
+
+/* =========================================================
+   CASE STUDY
+   ========================================================= */
+
+.case-intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-md);
+
+    padding-block: var(--space-lg) var(--space-md);
+
+    overflow-x: clip;
+}
+
+@media (min-width: 1024px) {
+    .case-intro {
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        column-gap: var(--space-md);
+    }
+
+    .breadcrumb,
+    .case-title {
+        grid-column: 1 / -1;
+    }
+
+    .case-summary {
+        grid-column: 1 / 7;
+    }
+
+    .case-facts {
+        grid-column: 8 / -1;
+    }
+}
+
+.breadcrumb ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 1ch;
+
+    list-style: none;
+
+    color: var(--color-text-muted);
+}
+
+.breadcrumb li + li::before {
+    content: "/";
+    content: "/" / "";
+
+    margin-inline-end: 1ch;
+}
+
+.breadcrumb a {
+    min-block-size: 44px;
+
+    display: inline-flex;
+    align-items: center;
+
+    text-decoration-line: underline;
+    text-decoration-color: var(--color-signal);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.25em;
+}
+
+/* Styled from the ARIA state, so the visual and the semantics can't drift */
+.breadcrumb [aria-current="page"] {
+    color: var(--color-text);
+}
+
+.case-title {
+    position: relative;
+
+    font-family: var(--font-display);
+    font-size: var(--text-headliner);
+    font-stretch: 62%;
+    font-weight: 900;
+    line-height: 0.78;
+    text-transform: uppercase;
+}
+
+@media (min-width: 600px) {
+    .case-title {
+        font-stretch: 85%;
+    }
+}
+
+.case-summary {
+    max-inline-size: 40ch;
+
+    font-size: var(--text-lead);
+    line-height: 1.35;
+}
+
+/* Architecture as an ordered signal chain. Input (first stage) and
+   output (last stage) carry the signal color, per the red rule. */
+.signal-chain {
+    margin-top: var(--space-lg);
+
+    list-style: none;
+    counter-reset: stage;
+}
+
+.signal-chain li {
+    display: grid;
+    grid-template-columns: 4ch minmax(0, 1fr);
+    column-gap: var(--space-sm);
+
+    padding-block: var(--space-sm);
+
+    border-top: 1px solid var(--color-line);
+
+    counter-increment: stage;
+}
+
+.signal-chain li::before {
+    content: counter(stage, decimal-leading-zero);
+    content: counter(stage, decimal-leading-zero) / "";
+
+    grid-row: 1 / 3;
+
+    padding-top: 0.35em;
+
+    color: var(--color-text-muted);
+
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+}
+
+.signal-chain li:first-child::before,
+.signal-chain li:last-child::before {
+    color: var(--color-signal);
+}
+
+.signal-chain-stage {
+    font-size: var(--text-lead);
+}
+
+.signal-chain-detail {
+    color: var(--color-text-muted);
+
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+}
+
+.feature-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
+    gap: var(--space-lg) var(--space-md);
+}
+
+.feature-list dt {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-stretch: 80%;
+    font-weight: 800;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.feature-list dd {
+    margin-top: var(--space-xs);
+
+    color: var(--color-text-muted);
+}
+
+
+/* =========================================================
+   ERROR PAGE (404)
+   Reuses the case-study intro; only the action links are new
+   ========================================================= */
+
+.error-links {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: var(--space-md);
+}
+
+@media (min-width: 1024px) {
+    .error-links {
+        grid-column: 1 / -1;
+    }
+}
+
+
+/* =========================================================
+   CONTACT
+   A full-bleed plate of red ink with black type: the output of the
+   signal chain. Black on #ff2a1a is 5.27:1 (passes AA).
+   ========================================================= */
+
+.contact {
+    grid-column: full;
+
+    display: grid;
+    grid-template-columns: subgrid;
+    row-gap: var(--space-md);
+
+    padding-block: var(--space-xl);
+
+    background: var(--color-signal);
+    color: var(--color-bg);
+}
+
+.contact > * {
+    grid-column: content;
+}
+
+/* On red, every signal-colored detail switches to the paper color */
+.contact .cta-link,
+.contact .contact-email {
+    text-decoration-color: currentColor;
+}
+
+.contact :focus-visible {
+    outline-color: var(--color-bg);
+}
+
+.contact-heading {
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    font-stretch: 80%;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+/* 62% width keeps the full address on one line on large screens; when it
+   doesn't fit, it breaks at the <wbr> before "@" */
+.contact-email {
+    justify-self: start;
+
+    font-family: var(--font-display);
+    font-size: var(--text-email);
+    font-stretch: 62%;
+    font-weight: 900;
+    line-height: 0.88;
+
+    text-decoration-line: underline;
+    text-decoration-thickness: 0.035em;
+    text-underline-offset: 0.1em;
+}
+
+@media (hover: hover) {
+    .contact-email:hover {
+        text-decoration-thickness: 0.08em;
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .contact-email {
+        transition: text-decoration-thickness var(--duration-fast) var(--ease-out);
+    }
+}
+
+/* Copy button: a real <button> styled like the shared CTA link.
+   Hidden in HTML; js/modules/copy-email.js reveals it only if the
+   Clipboard API is available. */
+.contact-copy {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: var(--space-sm);
+}
+
+.contact .link-button {
+    color: var(--color-bg);
+}
+
+.contact-details {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-lg);
+
+    margin-top: var(--space-md);
+}
+
+@media (min-width: 1024px) {
+    .contact-details {
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        column-gap: var(--space-md);
+    }
+
+    .contact-note {
+        grid-column: 1 / 6;
+    }
+
+    .contact-channels {
+        grid-column: 7 / -1;
+    }
+}
+
+.contact-note {
+    max-inline-size: 36ch;
+
+    font-size: var(--text-lead);
+    line-height: 1.35;
+}
+
+/* Channels: pairs stacked (label over value), side by side when there's room */
+.contact-channels {
+    grid-template-columns: repeat(auto-fit, minmax(min(11rem, 100%), 1fr));
+    align-content: start;
+}
+
+.contact-channels > div {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.contact-channels dt {
+    color: var(--color-bg);
+    font-weight: 700;
+}
+
+.contact-channels dd {
+    grid-column: 1;
+    overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.site-footer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-sm);
+
+    padding-block: var(--space-md);
+
+    color: var(--color-text-muted);
+    font-size: var(--text-meta);
+}
+
+@media (min-width: 600px) {
+    .site-footer {
+        flex-direction: row;
+    }
+}
+
+.footer-links {
+    display: flex;
+    gap: var(--space-md);
+
+    list-style: none;
+}

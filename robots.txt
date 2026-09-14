@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://freakcarpio.github.io/sitemap.xml

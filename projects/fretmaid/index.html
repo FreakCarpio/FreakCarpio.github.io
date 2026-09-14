@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Fretmaid case study: an Android app for learning guitar with real-time pitch detection and chord recognition, built with Kotlin, FastAPI and Python."
+    >
+
+    <title>Fretmaid case study | Emilio Carpio</title>
+
+    <link rel="canonical" href="https://freakcarpio.github.io/projects/fretmaid/">
+    <meta name="theme-color" content="#0b0a09">
+
+    <link rel="icon" href="../../favicon.ico" sizes="32x32">
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="../../apple-touch-icon.png">
+
+    <!-- Open Graph: link previews on LinkedIn, WhatsApp, Slack, etc.
+         URLs must be absolute for crawlers -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Emilio Carpio">
+    <meta property="og:title" content="Fretmaid case study | Emilio Carpio">
+    <meta property="og:description" content="Fretmaid case study: an Android app for learning guitar with real-time pitch detection and chord recognition, built with Kotlin, FastAPI and Python.">
+    <meta property="og:url" content="https://freakcarpio.github.io/projects/fretmaid/">
+    <meta property="og:image" content="https://freakcarpio.github.io/assets/images/og/og-default.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Emilio Carpio, Frontend and Full-Stack Developer">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link
+        rel="preload"
+        href="../../assets/fonts/archivo-variable-latin.woff2"
+        as="font"
+        type="font/woff2"
+        crossorigin
+    >
+
+    <link rel="stylesheet" href="../../css/styles.css">
+
+    <script type="module" src="../../js/main.js"></script>
+</head>
+
+<body>
+
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <!-- ==================== HEADER ==================== -->
+    <!-- Keep in sync with /index.html (paths here go up two levels) -->
+    <header class="site-header">
+        <nav class="navbar" aria-label="Primary" data-js="navbar">
+
+            <a href="../../" class="logo">
+                EC<span class="visually-hidden"> Emilio Carpio, home</span>
+            </a>
+
+            <button
+                class="menu-toggle"
+                type="button"
+                data-js="menu-toggle"
+                aria-expanded="false"
+                aria-controls="site-menu"
+                hidden
+            >
+                Menu
+            </button>
+
+            <ul class="nav-links" id="site-menu" data-js="menu">
+                <li><a href="../../#about">About</a></li>
+                <li><a href="../../#skills">Skills</a></li>
+                <li><a href="../../#projects">Work</a></li>
+                <li><a href="../../#contact">Contact</a></li>
+            </ul>
+
+        </nav>
+    </header>
+
+
+    <main id="main">
+
+        <article class="case-study">
+
+            <!-- ==================== INTRO ==================== -->
+            <header class="case-intro">
+
+                <nav class="breadcrumb" aria-label="Breadcrumb">
+                    <ol role="list">
+                        <li><a href="../../#projects">Work</a></li>
+                        <li aria-current="page">Fretmaid</li>
+                    </ol>
+                </nav>
+
+                <h1 class="case-title print" data-text="Fretmaid" style="view-transition-name: project-fretmaid">Fretmaid</h1>
+
+                <p class="case-summary">
+                    Android app for learning guitar. It streams your playing
+                    to a Python backend that detects pitch and recognizes
+                    chords in real time, then adapts feedback to your progress.
+                </p>
+
+                <dl class="meta-list case-facts">
+                    <div>
+                        <dt>Role</dt>
+                        <dd>Team lead</dd>
+                    </div>
+                    <div>
+                        <dt>Team</dt>
+                        <dd>3 people</dd>
+                    </div>
+                    <div>
+                        <dt>Built</dt>
+                        <dd>Android app (Kotlin)</dd>
+                        <dd>FastAPI backend</dd>
+                    </div>
+                    <div>
+                        <dt>Process</dt>
+                        <dd>Scrum, Mobile-D</dd>
+                    </div>
+                    <div>
+                        <dt>Context</dt>
+                        <dd>Engineering thesis (approved)</dd>
+                    </div>
+                    <div>
+                        <dt>Stack</dt>
+                        <dd>Kotlin, Python, FastAPI, PostgreSQL</dd>
+                    </div>
+                    <div>
+                        <dt>Status</dt>
+                        <dd>Not published</dd>
+                    </div>
+                </dl>
+
+            </header>
+
+
+            <!-- ==================== OVERVIEW ==================== -->
+            <section class="section">
+
+                <h2 class="section-label">
+                    <span>Overview</span>
+                </h2>
+
+                <div class="section-content prose">
+                    <p>
+                        Fretmaid is an Android app for learning guitar. While you
+                        play, it listens through the phone's microphone, analyzes
+                        the sound in real time and responds with what it hears:
+                        the notes, the chords and how your practice is progressing.
+                    </p>
+                    <p>
+                        It combines a tuner, chord recognition, guided and free
+                        practice modes, progress metrics and feedback that adapts
+                        to each learner.
+                    </p>
+                </div>
+
+            </section>
+
+
+            <!-- ==================== MY ROLE ==================== -->
+            <section class="section">
+
+                <h2 class="section-label">
+                    <span>My role</span>
+                </h2>
+
+                <div class="section-content prose">
+                    <p>
+                        Fretmaid was my engineering thesis, developed by a team of
+                        three. I was the team lead, and I built the two main layers
+                        of the product: the Android app in Kotlin and the backend
+                        with FastAPI.
+                    </p>
+                    <p>
+                        We organized the work with Scrum and Mobile-D, an agile
+                        method designed for mobile application development.
+                    </p>
+                </div>
+
+            </section>
+
+
+            <!-- ==================== ARCHITECTURE ==================== -->
+            <section class="section">
+
+                <h2 class="section-label">
+                    <span>Architecture</span>
+                </h2>
+
+                <div class="section-content">
+
+                    <p class="prose">
+                        Audio moves through Fretmaid like a guitar signal through
+                        a chain of effects: each stage takes the output of the
+                        previous one.
+                    </p>
+
+                    <ol class="signal-chain">
+                        <li>
+                            <span class="signal-chain-stage">Microphone capture</span>
+                            <span class="signal-chain-detail">Android app, Kotlin</span>
+                        </li>
+                        <li>
+                            <span class="signal-chain-stage">Real-time audio stream</span>
+                        </li>
+                        <li>
+                            <span class="signal-chain-stage">API</span>
+                            <span class="signal-chain-detail">FastAPI, Python</span>
+                        </li>
+                        <li>
+                            <span class="signal-chain-stage">Signal processing</span>
+                            <span class="signal-chain-detail">FFT, STFT</span>
+                        </li>
+                        <li>
+                            <span class="signal-chain-stage">Analysis</span>
+                            <span class="signal-chain-detail">Pitch detection, chord recognition (chroma)</span>
+                        </li>
+                        <li>
+                            <span class="signal-chain-stage">Progress metrics</span>
+                        </li>
+                        <li>
+                            <span class="signal-chain-stage">Adaptive feedback</span>
+                            <span class="signal-chain-detail">Thresholds and each user's metrics</span>
+                        </li>
+                    </ol>
+
+                </div>
+
+            </section>
+
+
+            <!-- ==================== AUDIO PIPELINE ==================== -->
+            <section class="section">
+
+                <h2 class="section-label">
+                    <span>Audio pipeline</span>
+                </h2>
+
+                <div class="section-content prose">
+                    <p>
+                        All audio analysis runs in Python on the backend. The
+                        signal is analyzed with the Fast Fourier Transform (FFT)
+                        and the Short-Time Fourier Transform (STFT), which show
+                        which frequencies are present and how they change over time.
+                    </p>
+                    <p>
+                        Pitch detection identifies the notes being played. Chord
+                        recognition is based on chroma features, which summarize
+                        the energy of each of the twelve pitch classes.
+                    </p>
+                </div>
+
+            </section>
+
+
+            <!-- ==================== FEATURES ==================== -->
+            <section class="section">
+
+                <h2 class="section-label">
+                    <span>Features</span>
+                </h2>
+
+                <div class="section-content">
+                    <dl class="feature-list">
+                        <div>
+                            <dt>Tuner</dt>
+                            <dd>Tune the guitar using the phone's microphone.</dd>
+                        </div>
+                        <div>
+                            <dt>Chord recognition</dt>
+                            <dd>Identifies the chord being played from chroma features.</dd>
+                        </div>
+                        <div>
+                            <dt>Guided and free practice</dt>
+                            <dd>Two practice modes: follow a guided session or play freely.</dd>
+                        </div>
+                        <div>
+                            <dt>Progress metrics</dt>
+                            <dd>Tracks each learner's practice over time.</dd>
+                        </div>
+                        <div>
+                            <dt>Adaptive feedback</dt>
+                            <dd>Adjusts to each learner using thresholds and their own metrics.</dd>
+                        </div>
+                    </dl>
+                </div>
+
+            </section>
+
+
+            <!-- ==================== OUTCOME ==================== -->
+            <section class="section">
+
+                <h2 class="section-label">
+                    <span>Outcome</span>
+                </h2>
+
+                <div class="section-content prose">
+                    <p>
+                        Fretmaid was approved as my engineering thesis. The app
+                        has not been published yet.
+                    </p>
+
+                    <a href="../../#projects" class="cta-link">Back to selected work</a>
+                </div>
+
+            </section>
+
+        </article>
+
+    </main>
+
+
+    <!-- ==================== FOOTER ==================== -->
+    <!-- Keep in sync with /index.html -->
+    <footer class="site-footer">
+
+        <p>© 2026 Emilio Carpio</p>
+
+        <ul class="footer-links" role="list">
+            <li><a href="https://github.com/FreakCarpio" rel="me">GitHub</a></li>
+            <li><a href="https://www.linkedin.com/in/emilio-alejandro-carpio-guzm%C3%A1n/" rel="me">LinkedIn</a></li>
+        </ul>
+
+    </footer>
+
+</body>
+</html>
