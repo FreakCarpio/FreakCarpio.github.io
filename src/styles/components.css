@@ -1,0 +1,1293 @@
+/* =========================================================
+   SHARED COMPONENTS
+   Hover styles always sit inside (hover: hover) and (pointer: fine):
+   on touch screens a tap would leave :hover stuck on the element.
+   Press feedback uses :active, which works for every input type and
+   responds when the finger lands, not when it lifts.
+   ========================================================= */
+
+
+/* ---------- Skip link ---------- */
+
+.skip-link {
+    position: absolute;
+    top: calc(var(--space-sm) + env(safe-area-inset-top, 0px));
+    left: var(--gutter);
+    z-index: var(--z-skip);
+
+    min-block-size: var(--hit);
+    padding: 0 var(--space-sm);
+
+    display: inline-flex;
+    align-items: center;
+
+    background: var(--color-text);
+    color: var(--color-bg);
+
+    font-size: var(--text-meta);
+    font-weight: 600;
+
+    transform: translateY(-300%);
+}
+
+.skip-link:focus {
+    transform: translateY(0);
+}
+
+
+/* ---------- Buttons ----------
+   Primary: light ink with a red plate printed off register. Hovering pulls
+   the plate further out; pressing pushes the button into register, like
+   the print coming down on the paper. */
+
+.btn {
+    min-block-size: 3rem;
+    padding: 0 1.25rem;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+
+    border: 0;
+    border-radius: 0;
+    background: none;
+    color: var(--color-text);
+
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
+
+    cursor: pointer;
+}
+
+.btn-primary {
+    min-block-size: var(--hit-lg);
+    padding: 0.5rem 1.5rem;
+
+    background: var(--color-text);
+    color: var(--color-bg);
+
+    box-shadow: var(--plate-rest) var(--plate-rest) 0 0 var(--color-signal);
+}
+
+.btn-secondary {
+    border: 1px solid var(--color-line-control);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .btn-primary:hover {
+        box-shadow: var(--plate-hover) var(--plate-hover) 0 0 var(--color-signal);
+        transform: translate(-3px, -3px);
+    }
+
+    .btn-secondary:hover {
+        border-color: var(--color-text);
+    }
+}
+
+.btn-primary:active {
+    box-shadow: 0 0 0 0 var(--color-signal);
+    transform: translate(var(--plate-rest), var(--plate-rest));
+}
+
+.btn-secondary:active {
+    background: var(--color-surface-2);
+}
+
+.btn[aria-disabled="true"] {
+    background: var(--color-surface-2);
+    color: var(--color-text-muted);
+    box-shadow: none;
+    transform: none;
+
+    cursor: default;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .btn {
+        transition:
+            transform var(--duration-press) var(--ease-out),
+            box-shadow var(--duration-press) var(--ease-out),
+            border-color var(--duration-fast) ease,
+            background-color var(--duration-press) var(--ease-out);
+    }
+
+    .btn-secondary:active {
+        transform: scale(0.97);
+    }
+}
+
+/* On narrow screens the primary action spans the column: an easy target */
+@media (width < 600px) {
+    .btn-primary {
+        inline-size: 100%;
+    }
+}
+
+
+/* ---------- CTA link ----------
+   Inline call to action: text with a red underline */
+
+.cta-link {
+    min-block-size: var(--hit);
+
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+
+    font-weight: 600;
+
+    text-decoration-line: underline;
+    text-decoration-color: var(--color-signal);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.3em;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .cta-link:hover {
+        text-decoration-thickness: 4px;
+    }
+}
+
+.cta-link:active {
+    text-decoration-thickness: 4px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .cta-link {
+        transition:
+            text-decoration-thickness var(--duration-fast) ease,
+            transform var(--duration-press) var(--ease-out);
+    }
+
+    .cta-link:active {
+        transform: scale(0.97);
+    }
+}
+
+
+/* ---------- Chips ----------
+   Labels, not buttons: no control border, so they don't look tappable.
+   Always one line. */
+
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+
+    list-style: none;
+}
+
+.chip {
+    min-block-size: 2rem;
+    max-inline-size: 100%;
+    padding: 0.25rem 0.75rem;
+
+    display: inline-flex;
+    align-items: center;
+
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-chip);
+    background: var(--color-surface-2);
+
+    font-size: var(--text-meta);
+    line-height: 1.2;
+    /* A chip never wraps; one longer than its container breaks instead of
+       pushing the page sideways */
+    overflow-wrap: anywhere;
+}
+
+.chip-mono {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+}
+
+
+/* ---------- Fact list ----------
+   Label/value pairs; extra values stack in the value column */
+
+.fact-list {
+    display: grid;
+    gap: var(--space-xs);
+
+    font-size: var(--text-meta);
+    font-variant-numeric: tabular-nums;
+}
+
+.fact-list > div {
+    display: grid;
+    grid-template-columns: 7.5rem minmax(0, 1fr);
+    column-gap: var(--space-sm);
+    align-items: baseline;
+}
+
+.fact-list dt {
+    color: var(--color-text-muted);
+}
+
+.fact-list dd {
+    grid-column: 2;
+    overflow-wrap: anywhere;
+}
+
+/* Technical variant: labels read as equipment labels */
+.fact-list-technical > div {
+    grid-template-columns: 9.5rem minmax(0, 1fr);
+}
+
+.fact-list-technical dt {
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+}
+
+/* Very narrow screens: the label goes above its values instead of
+   squeezing them into a sliver */
+@media (width < 360px) {
+    .fact-list > div {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .fact-list dd {
+        grid-column: 1;
+    }
+}
+
+
+/* ---------- Metrics ----------
+   Rendered only for measured values (see Metrics.tsx) */
+
+.metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(9rem, 100%), 1fr));
+    gap: var(--space-md);
+}
+
+.metric {
+    display: grid;
+    align-content: start;
+    gap: var(--space-2xs);
+
+    padding-top: var(--space-sm);
+
+    border-top: 1px solid var(--color-line-control);
+}
+
+.metric dt {
+    color: var(--color-text-muted);
+
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+/* Numbers are compared, so they are never truncated */
+.metric-value {
+    font-family: var(--font-mono);
+    font-size: var(--text-figure);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+    overflow-wrap: anywhere;
+}
+
+.metric-source {
+    color: var(--color-text-muted);
+    font-size: var(--text-meta);
+}
+
+
+/* ---------- Panel ---------- */
+
+.panel {
+    padding: var(--space-md);
+
+    border: 1px solid var(--color-line);
+    background: var(--color-surface-1);
+}
+
+
+/* ---------- Print plates ----------
+   A two-ink screenprint: a red plate printed slightly off register behind
+   the light ink. The plate is generated content drawn from data-text, so
+   the text exists once in the document (search engines, copy/paste) and
+   the empty alt text keeps screen readers from reading it twice. */
+
+.print {
+    position: relative;
+    isolation: isolate;
+}
+
+.print::before {
+    content: attr(data-text);
+    content: attr(data-text) / "";
+
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+
+    color: var(--color-signal);
+
+    transform: translate(0.035em, 0.03em);
+
+    pointer-events: none;
+    user-select: none;
+}
+
+@media (forced-colors: active) {
+    .print::before {
+        display: none;
+    }
+}
+
+
+/* ---------- Fit title ----------
+   Display titles shrink to fit before they wrap, and never truncate.
+   --longest is the character count of the longest word (set from React,
+   see lib/fitTitle.ts) and --char-em the average glyph width at the
+   current font width. Container width ÷ (characters × glyph width) is the
+   largest size at which that word still fits. An ancestor must be a size
+   container (container-type: inline-size). */
+
+.fit-title {
+    --char-em: 0.52;
+    --fit-min: 2.25rem;
+    --fit-max: var(--text-headliner);
+
+    font-size: clamp(
+        var(--fit-min),
+        calc(100cqi / (var(--longest, 8) * var(--char-em))),
+        var(--fit-max)
+    );
+
+    /* Last resort below the minimum size: break inside the word */
+    overflow-wrap: anywhere;
+}
+
+
+/* ---------- Strings ----------
+   A guitar string drawn in SVG; src/lib/pluck.ts animates the path */
+
+.string {
+    inline-size: 100%;
+    block-size: 1.5rem;
+
+    display: block;
+    overflow: visible;
+}
+
+.string path {
+    fill: none;
+    stroke: var(--color-line-control);
+    stroke-width: var(--string-thickness, 1.5px);
+    stroke-linecap: round;
+}
+
+
+/* =========================================================
+   HEADER
+   Sticky. useHeaderScroll sets [data-header-hidden] while scrolling down.
+   Only the hidden state sets a transform: a transform on an ancestor
+   would break the position: fixed mobile panel inside it.
+   ========================================================= */
+
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-header);
+
+    padding-top: calc(var(--space-md) + env(safe-area-inset-top, 0px));
+
+    background: var(--color-bg);
+
+    view-transition-name: site-header;
+}
+
+/* Hairline that appears once the page has scrolled */
+.site-header::after {
+    content: "";
+
+    position: absolute;
+    inset: auto 0 0;
+
+    block-size: 1px;
+
+    background: var(--color-line);
+
+    opacity: 0;
+}
+
+.site-header[data-scrolled]::after {
+    opacity: 1;
+}
+
+.site-header[data-header-hidden] {
+    transform: translateY(-100%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .site-header {
+        transition: transform var(--duration-base) var(--ease-out);
+    }
+
+    .site-header::after {
+        transition: opacity var(--duration-fast) ease;
+    }
+}
+
+.navbar {
+    min-block-size: 3.75rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+}
+
+/* Keep the home link easy to tap around the logo. */
+.logo {
+    margin-inline-end: auto;
+    min-inline-size: var(--hit);
+    min-block-size: var(--hit);
+
+    display: inline-flex;
+    align-items: center;
+
+    justify-content: center;
+}
+
+.language-switch {
+    position: relative;
+    z-index: calc(var(--z-menu) + 1);
+    min-inline-size: var(--hit);
+    min-block-size: var(--hit);
+    display: inline-grid;
+    place-items: center;
+    color: var(--color-text);
+    font: 600 var(--text-micro)/1 var(--font-mono);
+}
+
+.language-switch span {
+    padding: 0.35rem 0.45rem;
+    border: 1px solid var(--color-line-control);
+    border-bottom: 2px solid var(--color-signal);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .language-switch:hover span {
+        background: var(--color-signal);
+        border-color: var(--color-signal);
+        color: var(--color-on-signal);
+    }
+}
+
+@media (width < 600px) {
+    html:not(.js) .navbar { flex-wrap: wrap; }
+    html:not(.js) .nav-links { order: 1; flex-basis: 100%; flex-wrap: wrap; }
+}
+
+.nav-links {
+    position: relative;
+
+    display: flex;
+    gap: var(--space-sm);
+
+    list-style: none;
+}
+
+.nav-links a {
+    min-block-size: var(--hit);
+    padding-inline: var(--space-2xs);
+
+    display: inline-flex;
+    align-items: center;
+
+    color: var(--color-text-muted);
+    font-size: var(--text-meta);
+}
+
+.nav-links a[aria-current] {
+    color: var(--color-text);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .nav-links a:hover {
+        color: var(--color-text);
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .nav-links a {
+        transition: color var(--duration-fast) ease;
+    }
+}
+
+/* One underline that slides to the current section. Width and position
+   come from a transform (see Header.tsx), so sliding never triggers layout. */
+.nav-indicator {
+    position: absolute;
+    left: 0;
+    bottom: 0.5rem;
+
+    inline-size: 1px;
+    block-size: 2px;
+
+    background: var(--color-signal);
+
+    transform-origin: left;
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+.nav-indicator[data-visible] {
+    opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .nav-indicator[data-animated] {
+        transition: transform var(--duration-base) var(--ease-in-out);
+    }
+}
+
+.menu-toggle {
+    min-block-size: var(--hit);
+    min-inline-size: var(--hit);
+    padding: 0;
+
+    display: none;
+    align-items: center;
+    gap: var(--space-xs);
+
+    border: 0;
+    background: transparent;
+    color: var(--color-text);
+
+    font-size: var(--text-meta);
+
+    cursor: pointer;
+}
+
+/* Two lines that cross into an X when the menu is open */
+.menu-icon {
+    position: relative;
+
+    inline-size: 1.125rem;
+    block-size: 0.75rem;
+}
+
+.menu-icon::before,
+.menu-icon::after {
+    content: "";
+
+    position: absolute;
+    left: 0;
+
+    inline-size: 100%;
+    block-size: 1.5px;
+
+    background: currentColor;
+}
+
+.menu-icon::before {
+    top: 0.125rem;
+}
+
+.menu-icon::after {
+    bottom: 0.125rem;
+}
+
+.menu-toggle[aria-expanded="true"] .menu-icon::before {
+    transform: translateY(0.1875rem) rotate(45deg);
+}
+
+.menu-toggle[aria-expanded="true"] .menu-icon::after {
+    transform: translateY(-0.1875rem) rotate(-45deg);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .menu-icon::before,
+    .menu-icon::after {
+        transition: transform var(--duration-fast) var(--ease-out);
+    }
+}
+
+/* ---------------------------------------------------------
+   Mobile menu (progressive enhancement)
+   Without scripts (no "js" class on <html>) the links stay visible in the
+   header and the button is not shown. With scripts the list collapses into
+   a full-screen panel. All open/closed styling reads the button's
+   aria-expanded state, so visuals can't drift from semantics.
+   --------------------------------------------------------- */
+
+@media (width < 600px) {
+    .js .menu-toggle {
+        position: relative;
+        z-index: calc(var(--z-menu) + 1);
+
+        display: inline-flex;
+    }
+
+    .js .logo {
+        position: relative;
+        z-index: calc(var(--z-menu) + 1);
+    }
+
+    /* Closed: already positioned as the overlay, so closing only animates
+       visibility and never flashes the inline list */
+    .js .nav-links {
+        position: fixed;
+        inset: 0;
+        z-index: var(--z-menu);
+
+        /* dvh tracks the visible area as the browser's bars show and hide */
+        block-size: 100dvh;
+
+        display: none;
+        flex-direction: column;
+        gap: var(--space-xs);
+
+        padding:
+            calc(var(--header-height) + var(--space-lg))
+            var(--gutter)
+            calc(var(--space-lg) + env(safe-area-inset-bottom, 0px));
+
+        overflow-y: auto;
+        /* Reaching the end of the panel must not scroll the page behind it */
+        overscroll-behavior: contain;
+
+        background: var(--color-bg);
+
+        opacity: 0;
+        clip-path: inset(0 0 100% 0);
+    }
+
+    .js .menu-toggle[aria-expanded="true"] + .nav-links {
+        display: flex;
+
+        opacity: 1;
+        clip-path: inset(0);
+    }
+
+    .js .nav-links a {
+        color: var(--color-text);
+
+        font-family: var(--font-display);
+        font-size: var(--text-section);
+        font-stretch: 75%;
+        font-weight: 800;
+        line-height: 1.1;
+    }
+
+    /* Current section: color plus underline, never color alone */
+    .js .nav-links a[aria-current] {
+        color: var(--color-signal);
+
+        text-decoration: underline;
+        text-decoration-thickness: 0.06em;
+        text-underline-offset: 0.12em;
+    }
+
+    .js .nav-indicator {
+        display: none;
+    }
+
+    /* Lock background scroll while the panel is open */
+    html:has(.menu-toggle[aria-expanded="true"]) {
+        overflow: hidden;
+    }
+}
+
+/* The panel drops like a stage curtain and leaves the way it came, faster.
+   The links have no entrance of their own: the curtain brings them.
+   allow-discrete lets display take part in the transition, and
+   @starting-style gives the opening a start point. Because these are
+   transitions, tapping the button mid-way reverses from the current point. */
+@media (width < 600px) and (prefers-reduced-motion: no-preference) {
+    .js .nav-links {
+        transition:
+            opacity var(--duration-fast) var(--ease-out),
+            clip-path var(--duration-fast) var(--ease-out),
+            display var(--duration-fast) allow-discrete;
+    }
+
+    .js .menu-toggle[aria-expanded="true"] + .nav-links {
+        transition-duration: var(--duration-base);
+    }
+
+    @starting-style {
+        .js .menu-toggle[aria-expanded="true"] + .nav-links {
+            opacity: 0;
+            clip-path: inset(0 0 100% 0);
+        }
+    }
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.site-footer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-sm);
+
+    padding-block: var(--space-md) calc(var(--space-md) + env(safe-area-inset-bottom, 0px));
+
+    color: var(--color-text-muted);
+    font-size: var(--text-meta);
+}
+
+@media (min-width: 600px) {
+    .site-footer {
+        flex-direction: row;
+    }
+}
+
+.footer-links {
+    display: flex;
+    gap: var(--space-md);
+
+    list-style: none;
+}
+
+.footer-links a {
+    min-block-size: var(--hit);
+
+    display: inline-flex;
+    align-items: center;
+
+    text-decoration: underline;
+    text-decoration-color: var(--color-line-control);
+    text-underline-offset: 0.3em;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .footer-links a:hover {
+        color: var(--color-text);
+    }
+}
+
+
+/* Chord lab: a three-fret neck and the pitch classes of its six strings. */
+.six-strings {
+    --lab-pad: clamp(0.875rem, 1.8vw, 1.5rem);
+    border: 1px solid var(--color-line-control);
+    border-top: 4px solid var(--color-signal);
+    padding: 0 var(--lab-pad) var(--lab-pad);
+    background: var(--color-bg);
+}
+
+.lab-header,
+.lab-output {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-sm);
+    padding-block: var(--space-sm);
+}
+
+.lab-header h4,
+.lab-readout strong {
+    font-family: var(--font-display);
+    font-stretch: 70%;
+    font-weight: 900;
+    font-size: var(--text-title);
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.sound-toggle,
+.lab-controls,
+.strum-button,
+.lab-hint {
+    display: none;
+}
+
+.js .sound-toggle,
+.js .strum-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+    min-height: var(--hit);
+    font: 500 var(--text-micro)/1.25 var(--font-mono);
+    cursor: pointer;
+}
+
+.sound-toggle {
+    border: 0;
+    background: transparent;
+    color: var(--color-text);
+}
+
+.js .lab-hint {
+    display: inline;
+}
+
+.js .lab-controls {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border: 1px solid var(--color-line-control);
+}
+
+.lab-controls button {
+    min-height: var(--hit);
+    border: 0;
+    border-right: 1px solid var(--color-line-control);
+    background: var(--color-surface-2);
+    color: var(--color-text);
+    font: 700 var(--text-lead)/1 var(--font-display);
+    cursor: pointer;
+}
+
+.lab-controls button:last-child {
+    border-right: 0;
+}
+
+.lab-controls button[aria-pressed="true"] {
+    color: var(--color-on-signal);
+    background: var(--color-text);
+    box-shadow: inset 0 -4px var(--color-signal);
+}
+
+.fretboard {
+    --nut-space: 2.3rem;
+    margin-block: var(--space-sm) var(--space-xs);
+    padding-inline: var(--space-xs);
+    background: var(--color-surface-1);
+    border-block: 1px solid var(--color-line);
+}
+
+.js .fretboard {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--hit);
+}
+
+.string-bank {
+    grid-column: 1;
+}
+
+.pick-track {
+    display: none;
+}
+
+.js .pick-track {
+    position: relative;
+    display: block;
+    grid-column: 2;
+    grid-row: 2;
+    border: 0;
+    background: transparent;
+    color: var(--color-signal);
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+}
+
+.pick-track:active {
+    cursor: grabbing;
+}
+
+.pick-track::before {
+    content: "";
+    position: absolute;
+    inset: 5% auto 5% 50%;
+    border-left: 1px dashed var(--color-line-control);
+}
+
+.pick-position {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+}
+
+.fret-labels {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin-left: var(--nut-space);
+    padding-block: 0.4rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    font: 400 var(--text-micro)/1 var(--font-mono);
+}
+
+.string-button {
+    display: grid;
+    grid-template-columns: var(--nut-space) minmax(0, 1fr);
+    align-items: stretch;
+    width: 100%;
+    min-height: var(--hit);
+    padding: 0;
+    border: 0;
+    color: var(--color-text);
+    background: none;
+    text-align: start;
+    cursor: pointer;
+}
+
+.string-button:focus-visible {
+    position: relative;
+    z-index: 1;
+    outline-offset: -2px;
+}
+
+.string-button:disabled {
+    cursor: default;
+    color: var(--color-text-muted);
+}
+
+.string-note {
+    align-self: center;
+    font: 400 var(--text-micro)/1 var(--font-mono);
+}
+
+.string-lane {
+    position: relative;
+    display: grid;
+    align-items: center;
+    border-left: 3px solid var(--color-text-muted);
+    /* Fret wires cross all six string lanes; the nut is the heavier line. */
+    background: repeating-linear-gradient(90deg, transparent 0 calc(33.3333% - 2px),
+        var(--color-line-control) calc(33.3333% - 2px) 33.3333%);
+}
+
+.string-lane path {
+    stroke: var(--color-text-muted);
+}
+
+.string-button[aria-pressed="true"] .string-note,
+.string-button:active .string-note {
+    color: var(--color-signal);
+}
+
+.string-button[aria-pressed="true"] path,
+.string-lane path[data-ringing] {
+    stroke: var(--color-signal);
+}
+
+.string-button[data-muted] path {
+    stroke-dasharray: 2 2;
+}
+
+.fret-marker {
+    position: absolute;
+    top: 50%;
+    width: 1.05rem;
+    height: 1.05rem;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: var(--color-signal);
+    pointer-events: none;
+}
+
+.fret-marker[data-open] {
+    width: 0.65rem;
+    height: 0.65rem;
+    background: var(--color-bg);
+    border: 2px solid var(--color-text);
+}
+
+.fret-marker[data-muted] {
+    background: var(--color-surface-1);
+    color: var(--color-text-muted);
+    text-align: center;
+    border-radius: 0;
+    font: 600 1rem/1 var(--font-body);
+}
+
+.lab-readout {
+    display: grid;
+    gap: var(--space-2xs);
+}
+
+.lab-readout span {
+    color: var(--color-text-muted);
+    font: 400 var(--text-micro)/1.4 var(--font-mono);
+    font-variant-numeric: tabular-nums;
+}
+
+.strum-button {
+    padding: var(--space-xs) var(--space-sm);
+    color: var(--color-on-signal);
+    background: var(--color-signal);
+    border: 1px solid var(--color-signal);
+}
+
+.chroma-strip {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 2px;
+    margin-block: var(--space-xs);
+    padding-top: var(--space-xs);
+    border-top: 1px solid var(--color-line);
+}
+
+.chroma-strip span {
+    border-top: 5px solid var(--color-line);
+    padding-block: var(--space-2xs);
+    color: var(--color-text-muted);
+    font: 400 0.65rem/1.3 var(--font-mono);
+    text-align: center;
+}
+
+.chroma-strip [data-lit] {
+    border-color: var(--color-signal);
+    color: var(--color-text);
+    font-weight: 700;
+}
+
+.lab-caption {
+    max-width: 51ch;
+    color: var(--color-text-muted);
+    font-size: var(--text-meta);
+    line-height: 1.45;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .string-button:not(:disabled):hover path {
+        stroke: var(--color-text);
+    }
+
+    .lab-controls button:not([aria-pressed="true"]):hover,
+    .strum-button:hover {
+        background: var(--color-text);
+        color: var(--color-bg);
+    }
+}
+
+@media (forced-colors: active) {
+    .pedal input:checked + .pedal-face,
+    .lab-controls button[aria-pressed="true"] {
+        outline: 2px solid Highlight;
+        outline-offset: -4px;
+    }
+
+    .fret-marker,
+    .chroma-strip [data-lit] {
+        forced-color-adjust: none;
+    }
+}
+
+/* =========================================================
+   DEVICE STAGE
+   Phone frame with a native scroll-snap gallery
+   ========================================================= */
+
+.device-stage {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-sm);
+}
+
+.device {
+    inline-size: min(100%, 20rem);
+    aspect-ratio: 9 / 19.5;
+
+    overflow: hidden;
+
+    border: 1px solid var(--color-line-control);
+    border-radius: var(--radius-device);
+    background: var(--color-surface-2);
+
+    /* The stage's red plate, off register like the titles */
+    box-shadow: var(--plate-hover) var(--plate-hover) 0 0 var(--color-signal);
+}
+
+.device-track {
+    block-size: 100%;
+
+    display: flex;
+
+    list-style: none;
+
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+}
+
+.device-track:focus-visible {
+    outline-offset: -4px;
+}
+
+.device-track > li {
+    flex: none;
+    inline-size: 100%;
+
+    scroll-snap-align: start;
+}
+
+.device-track img {
+    inline-size: 100%;
+    block-size: 100%;
+
+    object-fit: cover;
+}
+
+.device-dots {
+    display: flex;
+
+    list-style: none;
+}
+
+/* 44px target around an 8px dot */
+.device-dot {
+    inline-size: var(--hit);
+    block-size: var(--hit);
+
+    display: grid;
+    place-items: center;
+
+    border: 0;
+    background: none;
+
+    cursor: pointer;
+}
+
+.device-dot::before {
+    content: "";
+
+    inline-size: 0.5rem;
+    block-size: 0.5rem;
+
+    border: 1px solid var(--color-line-control);
+    border-radius: 50%;
+}
+
+/* Current: filled and wider, so it doesn't rely on color alone */
+.device-dot[aria-current]::before {
+    inline-size: 1.25rem;
+
+    border-color: var(--color-signal);
+    border-radius: var(--radius-chip);
+    background: var(--color-signal);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .device-dot::before {
+        transition: background-color var(--duration-fast) ease;
+    }
+}
+
+.device-video {
+    inline-size: min(100%, 40rem);
+
+    border: 1px solid var(--color-line-control);
+    background: var(--color-surface-2);
+}
+
+
+/* =========================================================
+   COPY EMAIL
+   Both labels share one grid cell and swap places, so the button keeps
+   the width of the longer label and nothing shifts.
+   ========================================================= */
+
+.copy-email {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs) var(--space-sm);
+}
+
+.copy-email-labels {
+    display: grid;
+
+    overflow: hidden;
+}
+
+.copy-email-label {
+    grid-area: 1 / 1;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+}
+
+.copy-email-label[data-label="copied"],
+.copy-email-button[data-status="copied"] .copy-email-label[data-label="idle"] {
+    opacity: 0;
+}
+
+.copy-email-button[data-status="copied"] .copy-email-label[data-label="copied"] {
+    opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .copy-email-label {
+        transition:
+            opacity var(--duration-fast) var(--ease-out),
+            transform var(--duration-fast) var(--ease-out);
+    }
+
+    .copy-email-label[data-label="copied"] {
+        transform: translateY(100%);
+    }
+
+    .copy-email-button[data-status="copied"] .copy-email-label[data-label="idle"] {
+        transform: translateY(-100%);
+    }
+
+    .copy-email-button[data-status="copied"] .copy-email-label[data-label="copied"] {
+        transform: translateY(0);
+    }
+}
+
+.copy-email-error {
+    font-size: var(--text-meta);
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   DATA TOGGLE (development only, never in a production build)
+   Deliberately plain: it is test chrome, not part of the design.
+   ========================================================= */
+
+.data-toggle {
+    position: fixed;
+    left: 50%;
+    bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+    z-index: calc(var(--z-grain) + 1);
+
+    display: flex;
+    gap: 2px;
+
+    padding: 3px;
+
+    border-radius: 8px;
+    background: #2a2a2a;
+
+    font: 12px/1 system-ui, sans-serif;
+
+    transform: translateX(-50%);
+}
+
+.data-toggle button {
+    padding: 8px 10px;
+
+    border: 0;
+    border-radius: 6px;
+    background: none;
+    color: #cfcfcf;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+}
+
+.data-toggle button[aria-pressed="true"] {
+    background: #fff;
+    color: #111;
+}
