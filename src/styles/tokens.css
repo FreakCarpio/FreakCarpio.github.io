@@ -1,0 +1,108 @@
+/* =========================================================
+   DESIGN TOKENS — "Two-Ink, Live"
+   Source of truth: docs/design/design-system.md and motion-spec.md.
+   Components never use raw values: only these tokens.
+   ========================================================= */
+
+:root {
+
+    color-scheme: dark;
+
+    /* ---------- Color ----------
+       Black paper, light ink, red ink. Contrast measured against --color-bg
+       (WCAG 2.x): text 16.51 · text-muted 5.84 · signal 5.28.
+       Red is ink: plates, the current/active state, focus and the Contact
+       block. Never light text on red (3.13:1): on red, text is always black. */
+    --color-bg: #0a0a0a;
+    --color-surface-1: #131211;        /* panels */
+    --color-surface-2: #1c1a18;        /* controls and chips on a panel */
+    --color-text: #efeae0;
+    --color-text-muted: #8f8b85;       /* 5.12:1 even on surface-2 */
+    --color-signal: #ff2a1a;
+    --color-on-signal: #0a0a0a;
+    --color-line: #262422;             /* decorative dividers only */
+    --color-line-control: #6a665f;     /* control borders, resting strings: ≥3:1 */
+
+    /* ---------- Layout ----------
+       Breakpoints (custom properties can't be used inside @media):
+       600px  — desktop navigation · two-column rows
+       1024px — 12-column grids */
+    --content-max: 1400px;
+    --gutter-base: clamp(1.25rem, 1.036rem + 1.071vw, 2rem);
+    /* In landscape the notch sits on a side: never let content slide under it */
+    --gutter: max(
+        var(--gutter-base),
+        env(safe-area-inset-left, 0px),
+        env(safe-area-inset-right, 0px)
+    );
+
+    /* ---------- Spacing (fluid, 320px → 1440px) ---------- */
+    --space-2xs: 0.25rem;
+    --space-xs: 0.5rem;
+    --space-sm: clamp(0.75rem, 0.6786rem + 0.3571vw, 1rem);
+    --space-md: clamp(1.5rem, 1.357rem + 0.7143vw, 2rem);
+    --space-lg: clamp(2.5rem, 2.071rem + 2.143vw, 4rem);
+    --space-xl: clamp(4rem, 3rem + 5vw, 7.5rem);
+    --space-2xl: clamp(6rem, 4.571rem + 7.143vw, 11rem);
+
+    /* Touch targets */
+    --hit: 2.75rem;      /* 44px minimum */
+    --hit-lg: 3.5rem;    /* 56px: primary button, contact rows */
+
+    /* Radii: a poster has square corners; only chips and the phone are round */
+    --radius-chip: 999px;
+    --radius-device: 2rem;
+
+    /* Stacking order, one named layer per job */
+    --z-raised: 10;
+    --z-header: 20;
+    --z-menu: 30;
+    --z-skip: 40;
+    --z-grain: 50;
+
+    /* ---------- Typography ---------- */
+    --font-body: "Archivo", "Archivo Fallback", Arial, sans-serif;
+    --font-display: "Archivo", "Archivo Fallback", Arial, sans-serif;
+    --font-mono: "Martian Mono", "Martian Mono Fallback", "Courier New", monospace;
+
+    /* Fluid scale. Every step keeps max ≤ 2.5 × min, so browser zoom still
+       enlarges text enough to pass WCAG 1.4.4 (Resize Text). */
+    --text-micro: 0.75rem;
+    --text-meta: 0.875rem;
+    --text-body: clamp(1rem, 0.9643rem + 0.1786vw, 1.125rem);
+    --text-lead: clamp(1.2rem, 1.114rem + 0.428vw, 1.5rem);
+    --text-title: clamp(1.44rem, 1.28rem + 0.798vw, 1.999rem);
+    --text-figure: clamp(1.728rem, 1.461rem + 1.338vw, 2.664rem);
+    --text-subhead: clamp(2.074rem, 1.651rem + 2.112vw, 3.552rem);
+    --text-section: clamp(2.488rem, 1.846rem + 3.209vw, 4.735rem);
+    --text-poster: clamp(4.5rem, 2.643rem + 9.286vw, 11rem);
+    --text-headliner: clamp(4.75rem, 2.714rem + 10.18vw, 11.875rem);
+    --text-hero: clamp(4.5rem, 2.4rem + 10.5vw, 11.25rem);
+    --text-email: clamp(3.25rem, 2.25rem + 5vw, 8.125rem);
+
+    --leading-tight: 0.8;
+    --leading-snug: 0.95;
+    --leading-lead: 1.35;
+    --leading-body: 1.5;
+
+    /* ---------- Elevation ----------
+       No soft shadows. Depth is printed: a hard red plate, off register. */
+    --plate-rest: 3px;
+    --plate-hover: 6px;
+
+    /* ---------- Motion ----------
+       Every use sits inside prefers-reduced-motion: no-preference.
+       There is no ease-in token on purpose: it delays the moment the
+       visitor is watching. Exits reuse --ease-out, only shorter. */
+    --duration-press: 120ms;    /* press feedback */
+    --duration-fast: 160ms;     /* hover, color, underline, exits */
+    --duration-base: 240ms;     /* menu, nav indicator, page transition */
+    --duration-reveal: 600ms;   /* scroll reveals, once */
+    --duration-hero: 700ms;     /* hero entrance, once per session */
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);       /* entering and leaving */
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);   /* moving while on screen */
+
+    /* Header: top padding + navbar height (used by sticky offsets) */
+    --header-height: calc(var(--space-md) + 3.75rem + env(safe-area-inset-top, 0px));
+
+}

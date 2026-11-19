@@ -6,3 +6,9 @@ desktop.ini
 # Editors
 .vscode/
 .idea/
+
+# Build
+node_modules/
+dist/
+dist-ssr/
+*.tsbuildinfo

@@ -1,0 +1,1472 @@
+/* =========================================================
+   PAGE SECTIONS
+   Motion rules (docs/design/motion-spec.md):
+   - one signature moment per screen, everything else responds in ≤160ms
+   - text that is being read never moves
+   - reveals play once; nothing blocks tapping or scrolling
+   - every animation sits inside prefers-reduced-motion: no-preference
+   - reveals that start hidden also require the "js" class, so the page
+     is complete when scripts don't run
+   ========================================================= */
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    row-gap: var(--space-md);
+
+    padding-block: var(--space-sm) var(--space-lg);
+
+    /* The offset red plate may overhang the column; clip it without
+       creating a scroll container */
+    overflow-x: clip;
+}
+
+.hero-title {
+    display: grid;
+    row-gap: var(--space-xs);
+
+    font-family: var(--font-display);
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.hero-name {
+    display: block;
+    margin-bottom: var(--space-sm);
+
+    font-size: var(--text-hero);
+    font-stretch: 62%;
+    line-height: var(--leading-tight);
+}
+
+.hero-name-line {
+    display: block;
+}
+
+.hero-role {
+    display: block;
+
+    font-size: var(--text-subhead);
+    font-stretch: 80%;
+    font-weight: 800;
+    line-height: var(--leading-snug);
+    text-wrap: balance;
+}
+
+/* Technical data, so it is set in mono and in its natural case */
+.hero-role-detail {
+    display: block;
+
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    font-stretch: normal;
+    font-weight: 400;
+    line-height: var(--leading-body);
+    text-transform: none;
+}
+
+.hero-side {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-md);
+}
+
+.hero-tagline {
+    max-inline-size: 38ch;
+
+    color: var(--color-text-muted);
+}
+
+.hero-status {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-sm);
+
+    list-style: none;
+
+    font-size: var(--text-meta);
+}
+
+.hero-status li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+
+    color: var(--color-text-muted);
+}
+
+/* Status is a signal state: a red dot plus the words (never color alone) */
+.hero-status-open {
+    color: var(--color-text) !important;
+    font-weight: 600;
+}
+
+.hero-status-open::before {
+    content: "";
+
+    inline-size: 0.5rem;
+    block-size: 0.5rem;
+
+    border-radius: 50%;
+    background: var(--color-signal);
+}
+
+.hero-actions {
+    inline-size: 100%;
+
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs) var(--space-md);
+}
+
+/* font-stretch can't mix % with vw, so the width axis steps up at
+   breakpoints while font-size stays fluid */
+@media (min-width: 600px) {
+    .hero-name {
+        font-stretch: 75%;
+    }
+}
+
+/* Poster composition: the name fills the top; below it, the role on the
+   left and the status and actions on the right. Subgrid keeps the role
+   inside the <h1> (semantics) while it shares a row with the side column. */
+@media (min-width: 1024px) {
+    .hero {
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        grid-template-rows: auto var(--space-md) auto auto;
+        column-gap: var(--space-md);
+        row-gap: var(--space-xs);
+
+        padding-block: var(--space-md) var(--space-lg);
+    }
+
+    .hero-title {
+        grid-column: 1 / -1;
+        grid-row: 1 / -1;
+
+        grid-template-columns: subgrid;
+        grid-template-rows: subgrid;
+    }
+
+    /* Capped by viewport height too, so the whole hero fits the first
+       screen on short laptops. Desktop-only: at 200% zoom the mobile rule
+       applies, so text still scales (WCAG 1.4.4). */
+    .hero-name {
+        grid-column: 1 / -1;
+        grid-row: 1;
+
+        margin-bottom: 0;
+
+        font-size: min(var(--text-hero), 25svh);
+        font-stretch: 85%;
+    }
+
+    .hero-role {
+        grid-column: 1 / 8;
+        grid-row: 3;
+    }
+
+    .hero-role-detail {
+        grid-column: 1 / 8;
+        grid-row: 4;
+    }
+
+    .hero-side {
+        grid-column: 9 / -1;
+        grid-row: 3 / 5;
+        align-self: end;
+    }
+}
+
+/* Signature moment, once per session (the "hero seen" flag is restored in
+   index.html before first paint). The red plate slides into register while
+   the light ink sweeps in; the role rises 8px; the rest only fades.
+   Uneven delays (80, 80, 140, 80ms) and shrinking travel make it one
+   gesture. Ends at 760ms. Only opacity, transform and clip-path animate,
+   so nothing shifts and every link is tappable from the first frame. */
+@media (prefers-reduced-motion: no-preference) {
+    :root:not([data-hero-seen]) .hero-name-line::before {
+        animation: plate-in var(--duration-hero) var(--ease-out) backwards;
+    }
+
+    :root:not([data-hero-seen]) .hero-name-line {
+        animation: ink-sweep var(--duration-reveal) var(--ease-out) 80ms backwards;
+    }
+
+    :root:not([data-hero-seen]) .hero-name-line + .hero-name-line {
+        animation-delay: 160ms;
+    }
+
+    :root:not([data-hero-seen]) .hero-role {
+        animation: rise-in 400ms var(--ease-out) 300ms backwards;
+    }
+
+    :root:not([data-hero-seen]) .hero-role-detail,
+    :root:not([data-hero-seen]) .hero-side {
+        animation: fade-in 300ms var(--ease-out) 380ms backwards;
+    }
+}
+
+/* Reduced motion: no travel, one gentle fade for the whole group */
+@media (prefers-reduced-motion: reduce) {
+    :root:not([data-hero-seen]) .hero {
+        animation: fade-in 200ms ease backwards;
+    }
+}
+
+@keyframes plate-in {
+    from {
+        opacity: 0;
+        transform: translate(0.2em, 0.12em);
+    }
+}
+
+/* Negative insets leave room for glyph overshoot; fill-mode backwards
+   removes the clip entirely once the sweep is done */
+@keyframes ink-sweep {
+    from {
+        clip-path: inset(-0.2em 100% -0.2em 0);
+    }
+
+    to {
+        clip-path: inset(-0.2em -0.1em -0.2em 0);
+    }
+}
+
+@keyframes rise-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+}
+
+
+/* =========================================================
+   POSTER TITLES (About, Skills)
+   ========================================================= */
+
+.poster-title {
+    font-family: var(--font-display);
+    font-size: var(--text-poster);
+    font-stretch: 70%;
+    font-weight: 900;
+    line-height: var(--leading-tight);
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   SELECTED WORK
+   A full-bleed panel: Fretmaid is the headliner of the page.
+   ========================================================= */
+
+.work {
+    grid-column: full;
+
+    padding-block: var(--space-lg) var(--space-xl);
+
+    border-block: 1px solid var(--color-line);
+    background: var(--color-surface-1);
+
+    overflow-x: clip;
+}
+
+.work-inner {
+    inline-size: min(100% - 2 * var(--gutter), var(--content-max));
+    margin-inline: auto;
+}
+
+.work-heading {
+    margin-bottom: var(--space-sm);
+
+    color: var(--color-text-muted);
+
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+/* Size container for the title's fit-to-width calculation */
+.project {
+    container-type: inline-size;
+}
+
+.headliner {
+    font-family: var(--font-display);
+    font-stretch: 62%;
+    font-weight: 900;
+    line-height: var(--leading-tight);
+    text-transform: uppercase;
+}
+
+/* Wider letterforms on larger screens, like top billing. --char-em tells
+   .fit-title how wide a glyph is at each width setting. */
+@media (min-width: 600px) {
+    .headliner {
+        --char-em: 0.66;
+
+        font-stretch: 85%;
+    }
+}
+
+@media (min-width: 1024px) {
+    .headliner {
+        --char-em: 0.84;
+
+        font-stretch: 112%;
+    }
+}
+
+/* The red plate comes into register as the title scrolls into view,
+   driven by scroll position (not time), so it is never continuous.
+   Browsers without scroll-driven animations show it registered. */
+@supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .headliner {
+            view-timeline-name: --headliner;
+        }
+
+        .headliner::before {
+            animation: plate-register linear both;
+            animation-timeline: --headliner;
+            animation-range: entry 0% cover 45%;
+        }
+    }
+}
+
+@keyframes plate-register {
+    from {
+        transform: translate(0.24em, 0.16em);
+    }
+
+    to {
+        transform: translate(0.035em, 0.03em);
+    }
+}
+
+.project-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-lg);
+
+    margin-top: var(--space-md);
+    padding-top: var(--space-md);
+
+    border-top: 1px solid var(--color-line);
+}
+
+@media (min-width: 1024px) {
+    .project-body {
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        grid-template-rows: auto 1fr;
+        column-gap: var(--space-md);
+    }
+
+    .project-summary {
+        grid-column: 1 / 7;
+        grid-row: 1;
+    }
+
+    .project-data {
+        grid-column: 1 / 7;
+        grid-row: 2;
+    }
+
+    .project-stage {
+        grid-column: 8 / -1;
+        grid-row: 1 / 3;
+    }
+}
+
+.project-summary {
+    display: grid;
+    justify-items: start;
+    align-content: start;
+    gap: var(--space-md);
+}
+
+.project-description {
+    max-inline-size: 38ch;
+
+    font-size: var(--text-lead);
+    line-height: var(--leading-lead);
+}
+
+.project-data {
+    display: grid;
+    align-content: start;
+    gap: var(--space-md);
+}
+
+/* =========================================================
+   ABOUT
+   ========================================================= */
+
+.about {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-lg);
+
+    padding-block: var(--space-xl);
+}
+
+.about-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    row-gap: var(--space-lg);
+}
+
+/* The title is red ink printed vertically along the left edge */
+.edge-title {
+    color: var(--color-signal);
+}
+
+@media (min-width: 1024px) {
+    .about {
+        grid-template-columns: auto minmax(0, 1fr);
+        column-gap: var(--space-lg);
+    }
+
+    .edge-title {
+        align-self: start;
+
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+    }
+
+    .about-body {
+        grid-template-columns: repeat(9, minmax(0, 1fr));
+        column-gap: var(--space-md);
+    }
+
+    .about-pull {
+        grid-column: 1 / -1;
+    }
+
+    .about-text {
+        grid-column: 1 / 6;
+    }
+
+    .about-facts {
+        grid-column: 7 / -1;
+        align-self: start;
+    }
+}
+
+.about-pull {
+    max-inline-size: 18ch;
+
+    font-family: var(--font-display);
+    font-size: var(--text-section);
+    font-stretch: 75%;
+    font-weight: 800;
+    line-height: var(--leading-snug);
+}
+
+/* Each line is a mask; the text inside rises into it. The padding keeps
+   descenders from being cut by the mask. */
+.pull-line {
+    display: block;
+    padding-bottom: 0.08em;
+
+    overflow: clip;
+}
+
+.pull-line > span {
+    display: block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .js .about-pull:not([data-inview]) .pull-line > span {
+        transform: translateY(110%);
+    }
+
+    /* Delays 0 / 70 / 120ms: the gap shrinks line by line */
+    .js .pull-line > span {
+        transition: transform 500ms var(--ease-out)
+            calc(var(--line) * 70ms - max(0, var(--line) - 1) * 20ms);
+    }
+}
+
+.about-text {
+    max-inline-size: 58ch;
+
+    color: var(--color-text-muted);
+    font-size: var(--text-lead);
+    line-height: var(--leading-lead);
+}
+
+.about-photo {
+    inline-size: min(100%, 20rem);
+
+    border: 1px solid var(--color-line-control);
+}
+
+
+/* =========================================================
+   SKILLS
+   ========================================================= */
+
+.skills {
+    padding-block: var(--space-xl);
+}
+
+/* Outline type: the stroke carries the contrast (16:1 against the paper).
+   Forced-colors mode replaces color with a system color, so it stays legible. */
+.outline-title {
+    position: relative;
+
+    inline-size: fit-content;
+
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--color-text);
+}
+
+@supports not (-webkit-text-stroke: 1px) {
+    .outline-title {
+        color: var(--color-text);
+    }
+}
+
+/* The outline fills with ink as the title scrolls into view. The fill is
+   generated content (the word exists once in the document), revealed left
+   to right by scroll position: reversible, with no duration of its own.
+   Without scroll-driven animations it simply stays an outline. */
+@supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .outline-title::after {
+            content: attr(data-text);
+            content: attr(data-text) / "";
+
+            position: absolute;
+            inset: 0;
+
+            color: var(--color-text);
+            -webkit-text-stroke: 0;
+
+            pointer-events: none;
+
+            animation: ink-fill linear both;
+            animation-timeline: view();
+            animation-range: entry 60% cover 45%;
+        }
+    }
+}
+
+@keyframes ink-fill {
+    from {
+        clip-path: inset(0 100% 0 0);
+    }
+
+    to {
+        clip-path: inset(0);
+    }
+}
+
+/* Effects pedal switches select the project behind each group of skills. */
+.skills-intro {
+    container-type: inline-size;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+}
+
+.skills-intro .outline-title:lang(es) {
+    /* Fit “Habilidades” on one line at narrow phone widths. */
+    font-size: min(var(--text-poster), 17cqi);
+}
+
+.pedal-instruction,
+.pedal-controls,
+.js .skill-print-category,
+.js .skill-panel:not([data-active]) {
+    display: none;
+}
+
+.js .pedal-instruction {
+    display: block;
+    color: var(--color-text-muted);
+    font-size: var(--text-meta);
+}
+
+.js .pedal-controls {
+    display: block;
+    border: 0;
+    min-inline-size: 0;
+}
+
+.pedalboard {
+    border-block: 1px solid var(--color-line-control);
+}
+
+.pedal-rail {
+    --pedal-gap: clamp(0.7rem, 2vw, 2rem);
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--pedal-gap);
+    isolation: isolate;
+    padding: var(--space-md) 0;
+}
+
+/* The cable passes through the side jacks of adjacent pedals. */
+.pedal {
+    position: relative;
+    display: grid;
+    min-width: 0;
+    cursor: pointer;
+    color: var(--color-text);
+}
+
+.pedal:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    left: 100%;
+    top: 53%;
+    width: var(--pedal-gap);
+    height: 4px;
+    background: var(--color-line-control);
+    border-bottom: 1px solid var(--color-bg);
+}
+
+.pedal-face {
+    position: relative;
+    display: grid;
+    align-content: space-between;
+    gap: var(--space-sm);
+    padding: clamp(0.85rem, 2vw, 1.7rem);
+    min-height: clamp(10rem, 22vw, 14rem);
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-line-control);
+    border-radius: 6px;
+    box-shadow: inset 0 -5px 0 var(--color-bg);
+}
+
+.pedal-face::before,
+.pedal-face::after {
+    content: "";
+    position: absolute;
+    top: 0.55rem;
+    right: 0.55rem;
+    width: 5px;
+    height: 5px;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    opacity: 0.7;
+}
+
+.pedal-face::after {
+    top: auto;
+    right: auto;
+    bottom: 0.7rem;
+    left: 0.55rem;
+}
+
+.pedal input:checked + .pedal-face {
+    background: var(--color-signal);
+    color: var(--color-on-signal);
+    border-color: var(--color-signal);
+}
+
+.pedal input:focus-visible + .pedal-face {
+    outline: 3px solid var(--color-text);
+    outline-offset: 3px;
+}
+
+.pedal-art {
+    width: 3.2rem;
+    height: 2rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 3;
+    opacity: 0.85;
+}
+
+.pedal-name,
+.skill-example h3 {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3.2vw, 3.5rem);
+    font-stretch: 70%;
+    font-weight: 900;
+    line-height: 0.98;
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+}
+
+.pedal-hardware {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 0.7rem;
+    background: var(--color-bg);
+    border-radius: 3px;
+}
+
+.pedal-switch {
+    display: block;
+    width: 1.6rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--color-text);
+    border: 3px solid var(--color-text-muted);
+    outline: 1px solid var(--color-text-muted);
+    outline-offset: 2px;
+    box-shadow: inset 0 -3px 0 var(--color-line-control);
+}
+
+.pedal-light,
+.sound-led {
+    display: inline-block;
+    width: 0.55rem;
+    height: 0.55rem;
+    border: 1px solid var(--color-text-muted);
+    border-radius: 50%;
+}
+
+.pedal input:checked + .pedal-face .pedal-light,
+.sound-toggle[aria-pressed="true"] .sound-led {
+    border-color: var(--color-signal);
+    background: var(--color-signal);
+}
+
+.pedal input:checked + .pedal-face .pedal-switch {
+    transform: translateY(1px) scale(0.9);
+    box-shadow: none;
+}
+
+.skill-panel {
+    display: grid;
+    gap: var(--space-md);
+    padding: var(--space-md) 0;
+    border-top: 1px solid var(--color-line-control);
+}
+
+.skill-example,
+.skill-stack {
+    display: grid;
+    gap: var(--space-sm);
+    align-content: start;
+    justify-items: start;
+    min-inline-size: 0;
+}
+
+.skill-example h3 {
+    font-size: var(--text-title);
+}
+
+.skill-example p {
+    max-width: 59ch;
+    color: var(--color-text-muted);
+}
+
+.skill-evidence {
+    text-align: start;
+    overflow-wrap: anywhere;
+}
+
+@media (width < 680px) {
+    .pedal:nth-child(even)::after {
+        display: none;
+    }
+}
+
+@media (min-width: 680px) {
+    .pedal-rail {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .skill-panel {
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+        gap: var(--space-lg);
+    }
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .pedal:hover .pedal-face {
+        border-color: var(--color-text);
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .pedal-switch,
+    .pedal-face {
+        transition: transform var(--duration-press) var(--ease-out);
+    }
+
+    .pedal:active .pedal-face {
+        transform: translateY(2px);
+    }
+}
+
+/* =========================================================
+   CONTACT
+   A full-bleed plate of red ink with black type.
+   Black on #ff2a1a is 5.28:1 (passes AA). Light text on red would fail,
+   so every state here stays black-on-red or inverts to light-on-black.
+   ========================================================= */
+
+.contact {
+    grid-column: full;
+}
+
+.contact-plate {
+    padding-block: var(--space-xl);
+
+    background: var(--color-signal);
+    color: var(--color-on-signal);
+}
+
+/* The plate rises like a curtain, once, when the section enters the
+   screen. Its content has no entrance of its own: the curtain brings it. */
+@media (prefers-reduced-motion: no-preference) {
+    .js .contact-plate {
+        transition: clip-path var(--duration-reveal) var(--ease-in-out);
+    }
+
+    .js .contact:not([data-inview]) .contact-plate {
+        clip-path: inset(100% 0 0 0);
+    }
+}
+
+/* Size container for the address' fit-to-width calculation */
+.contact-inner {
+    inline-size: min(100% - 2 * var(--gutter), var(--content-max));
+    margin-inline: auto;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-md);
+
+    container-type: inline-size;
+}
+
+.contact :focus-visible {
+    outline-color: var(--color-on-signal);
+}
+
+.contact-heading {
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+/* Sized so the longer half of the address always fits the column; it
+   breaks before "@" (a <wbr>) when the whole address doesn't fit */
+.contact-email {
+    --char-em: 0.5;
+    --fit-min: 1.5rem;
+    --fit-max: var(--text-email);
+
+    justify-self: start;
+    max-inline-size: 100%;
+
+    font-family: var(--font-display);
+    font-stretch: 62%;
+    font-weight: 900;
+    line-height: 0.9;
+
+    text-decoration-line: underline;
+    text-decoration-thickness: 0.035em;
+    text-underline-offset: 0.1em;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .contact-email:hover {
+        text-decoration-thickness: 0.08em;
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .contact-email {
+        transition: text-decoration-thickness var(--duration-fast) ease;
+    }
+}
+
+.contact .btn-secondary {
+    border: 1.5px solid currentColor;
+    color: var(--color-on-signal);
+}
+
+/* Pressed on red inverts: darkening the red would drop the black label
+   below 4.5:1, while light on black is 16.5:1 */
+.contact .btn-secondary:active {
+    background: var(--color-bg);
+    color: var(--color-text);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .contact .btn-secondary:hover {
+        border-color: currentColor;
+        background: rgb(10 10 10 / 0.1);
+    }
+}
+
+.contact-details {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-lg);
+
+    margin-top: var(--space-md);
+}
+
+@media (min-width: 1024px) {
+    .contact-details {
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        column-gap: var(--space-md);
+    }
+
+    .contact-note {
+        grid-column: 1 / 6;
+    }
+
+    .channels {
+        grid-column: 7 / -1;
+    }
+}
+
+.contact-note {
+    max-inline-size: 36ch;
+
+    font-size: var(--text-lead);
+    line-height: var(--leading-lead);
+}
+
+/* Each channel is one large row: easy to hit with a thumb */
+.channels {
+    display: grid;
+    align-content: start;
+
+    list-style: none;
+
+    border-top: 1.5px solid currentColor;
+}
+
+/* Narrow: label above value, so the value gets the full row */
+.channel {
+    min-block-size: var(--hit-lg);
+    padding-block: var(--space-xs);
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: var(--space-sm);
+
+    border-bottom: 1.5px solid currentColor;
+}
+
+.channel .icon {
+    grid-column: 2;
+    grid-row: 1 / 3;
+}
+
+@media (min-width: 600px) {
+    .channel {
+        grid-template-columns: 5.5rem minmax(0, 1fr) auto;
+    }
+
+    .channel .icon {
+        grid-column: auto;
+        grid-row: auto;
+    }
+}
+
+.channel-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.channel-value {
+    font-size: var(--text-lead);
+    font-weight: 600;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+
+.channel:active {
+    background: var(--color-bg);
+    color: var(--color-text);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .channel:hover .icon {
+        transform: translateX(4px);
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .channel .icon {
+        transition: transform var(--duration-fast) var(--ease-out);
+    }
+}
+
+
+/* =========================================================
+   CASE STUDY
+   ========================================================= */
+
+/* Reading progress: a 2px red line at the top of the screen, scaled by the
+   page's scroll position. Pure CSS; absent where unsupported. */
+.read-progress {
+    display: none;
+}
+
+@supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .read-progress {
+            position: fixed;
+            inset: 0 0 auto;
+            z-index: calc(var(--z-header) + 1);
+
+            block-size: 2px;
+
+            display: block;
+
+            background: var(--color-signal);
+
+            transform-origin: left;
+
+            animation: read-progress linear both;
+            animation-timeline: scroll(root block);
+        }
+    }
+}
+
+@keyframes read-progress {
+    from {
+        transform: scaleX(0);
+    }
+
+    to {
+        transform: scaleX(1);
+    }
+}
+
+/* Size container for the title's fit-to-width calculation */
+.case-intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-md);
+
+    padding-block: var(--space-lg) var(--space-md);
+
+    container-type: inline-size;
+}
+
+@media (min-width: 1024px) {
+    .case-intro {
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        column-gap: var(--space-md);
+    }
+
+    .case-intro > * {
+        grid-column: 1 / -1;
+    }
+
+    .case-intro > .case-summary {
+        grid-column: 1 / 7;
+    }
+
+    .case-intro > .case-facts {
+        grid-column: 8 / -1;
+    }
+}
+
+.breadcrumb ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 1ch;
+
+    list-style: none;
+
+    color: var(--color-text-muted);
+}
+
+.breadcrumb li + li::before {
+    content: "/";
+    content: "/" / "";
+
+    margin-inline-end: 1ch;
+}
+
+.breadcrumb a {
+    min-block-size: var(--hit);
+    min-inline-size: var(--hit);
+
+    display: inline-flex;
+    align-items: center;
+
+    text-decoration-line: underline;
+    text-decoration-color: var(--color-signal);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.25em;
+}
+
+/* Styled from the ARIA state, so the visual and the semantics can't drift */
+.breadcrumb [aria-current="page"] {
+    color: var(--color-text);
+}
+
+.case-title {
+    font-family: var(--font-display);
+    font-stretch: 62%;
+    font-weight: 900;
+    line-height: var(--leading-tight);
+    text-transform: uppercase;
+}
+
+@media (min-width: 600px) {
+    .case-title {
+        --char-em: 0.66;
+
+        font-stretch: 85%;
+    }
+}
+
+.case-summary {
+    max-inline-size: 40ch;
+
+    font-size: var(--text-lead);
+    line-height: var(--leading-lead);
+}
+
+.case-intro .metrics,
+.case-intro .device-stage {
+    margin-top: var(--space-md);
+}
+
+/* The index sits above the text on phones and beside it on wide screens. */
+.case-body {
+    border-top: 1px solid var(--color-line-control);
+    padding-block: var(--space-md) var(--space-xl);
+}
+
+.case-index h2 {
+    margin-bottom: var(--space-xs);
+    font-size: var(--text-body);
+}
+
+.case-index ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-md);
+    list-style: none;
+}
+
+.case-index a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--hit);
+    color: var(--color-text-muted);
+    font-size: var(--text-meta);
+    text-decoration: underline;
+    text-decoration-color: var(--color-line-control);
+    text-underline-offset: 0.3em;
+}
+
+.case-index a[aria-current],
+.case-index a:focus-visible {
+    color: var(--color-text);
+    text-decoration: underline 2px var(--color-signal);
+    text-underline-offset: 0.3em;
+}
+
+@media (hover: hover) {
+    .case-index a:hover {
+        color: var(--color-text);
+    }
+}
+
+.section {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-md);
+
+    padding-block: var(--space-lg);
+    border-bottom: 1px solid var(--color-line);
+}
+
+.section:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+@media (min-width: 1024px) {
+    .case-body {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+        column-gap: var(--space-md);
+        align-items: start;
+    }
+
+    .case-index {
+        position: sticky;
+        top: calc(var(--header-height) + var(--space-sm));
+        max-block-size: calc(100dvh - var(--header-height) - var(--space-md));
+        overflow-y: auto;
+    }
+
+    .case-index ul {
+        display: grid;
+    }
+
+    .section:first-child {
+        padding-top: 0;
+    }
+}
+
+.section-label {
+    font-family: var(--font-display);
+    font-size: var(--text-title);
+    font-stretch: 80%;
+    font-weight: 800;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.prose {
+    max-inline-size: 65ch;
+}
+
+.prose > * + * {
+    margin-top: var(--space-sm);
+}
+
+/* ---------- Signal chain ----------
+   The architecture as an ordered chain. As the list scrolls past the
+   middle of the screen, a red line runs down the rail and each stage
+   number turns red when the signal reaches it. Tied to scroll position:
+   reversible, no duration of its own. Without support (or with reduced
+   motion) only input and output carry the signal color. */
+
+.signal-chain {
+    margin-top: var(--space-lg);
+
+    list-style: none;
+    counter-reset: stage;
+}
+
+.signal-chain li {
+    position: relative;
+
+    display: grid;
+    grid-template-columns: 4ch minmax(0, 1fr);
+    column-gap: var(--space-sm);
+
+    padding-block: var(--space-sm);
+    padding-inline-start: var(--space-sm);
+
+    border-top: 1px solid var(--color-line);
+
+    counter-increment: stage;
+}
+
+.signal-chain li::before {
+    content: counter(stage, decimal-leading-zero);
+    content: counter(stage, decimal-leading-zero) / "";
+
+    grid-row: 1 / 3;
+
+    padding-top: 0.35em;
+
+    color: var(--color-text-muted);
+
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+}
+
+.signal-chain li:first-child::before,
+.signal-chain li:last-child::before {
+    color: var(--color-signal);
+}
+
+/* The rail segment beside each stage */
+.signal-chain li::after {
+    content: "";
+
+    position: absolute;
+    inset: 0 auto 0 0;
+
+    inline-size: 2px;
+
+    background: var(--color-line);
+}
+
+@supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+        /* view(block 0% 50%) moves the timeline's entry edge up to the
+           middle of the screen: each stage "enters" as it crosses it */
+        .signal-chain li::before {
+            color: var(--color-text-muted);
+
+            animation: stage-on linear both;
+            animation-timeline: view(block 0% 50%);
+            animation-range: entry 0% entry 30%;
+        }
+
+        .signal-chain li::after {
+            background: var(--color-signal);
+
+            transform-origin: top;
+
+            animation: rail-run linear both;
+            animation-timeline: view(block 0% 50%);
+            animation-range: entry 0% entry 100%;
+        }
+    }
+}
+
+@keyframes stage-on {
+    to {
+        color: var(--color-signal);
+    }
+}
+
+@keyframes rail-run {
+    from {
+        transform: scaleY(0);
+    }
+
+    to {
+        transform: scaleY(1);
+    }
+}
+
+.signal-chain-stage {
+    font-size: var(--text-lead);
+}
+
+.signal-chain-detail {
+    grid-column: 2;
+
+    color: var(--color-text-muted);
+
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    overflow-wrap: anywhere;
+}
+
+/* ---------- Features ---------- */
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
+    gap: var(--space-sm);
+
+    list-style: none;
+}
+
+.feature-card {
+    display: grid;
+    align-content: start;
+    gap: var(--space-xs);
+}
+
+/* Reserved 4:3 slot, so loading an image never shifts the card */
+.feature-shot {
+    inline-size: 100%;
+    aspect-ratio: 4 / 3;
+    margin-bottom: var(--space-xs);
+
+    object-fit: cover;
+
+    background: var(--color-surface-2);
+}
+
+.feature-title {
+    font-family: var(--font-display);
+    font-size: var(--text-title);
+    font-stretch: 80%;
+    font-weight: 800;
+    line-height: 1;
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+}
+
+.feature-description {
+    color: var(--color-text-muted);
+}
+
+.case-actions {
+    margin-top: var(--space-lg);
+
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs) var(--space-md);
+}
+
+
+/* =========================================================
+   ERROR PAGE (404)
+   ========================================================= */
+
+.error-page {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-md);
+
+    padding-block: var(--space-lg) var(--space-xl);
+
+    overflow-x: clip;
+}
+
+.error-code {
+    font-family: var(--font-display);
+    font-size: var(--text-poster);
+    font-stretch: 85%;
+    font-weight: 900;
+    line-height: var(--leading-tight);
+}
+
+/* A deliberate misprint: this plate never comes into register */
+.error-code::before {
+    transform: translate(0.14em, 0.1em) rotate(-1.5deg);
+}
+
+.error-title {
+    font-family: var(--font-display);
+    font-size: var(--text-section);
+    font-stretch: 75%;
+    font-weight: 800;
+    line-height: var(--leading-snug);
+    text-transform: uppercase;
+    text-wrap: balance;
+}
+
+.error-text {
+    font-size: var(--text-lead);
+}
+
+.error-links {
+    inline-size: 100%;
+
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs) var(--space-md);
+}

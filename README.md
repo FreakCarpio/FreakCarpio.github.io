@@ -1,48 +1,30 @@
 # Emilio Carpio · Portfolio
 
-Personal portfolio of Emilio Carpio, frontend and full-stack developer.
-
-**Live:** https://freakcarpio.github.io/
-
-## About the project
-
-A hand-built site with no frameworks and no build step: semantic HTML, modern CSS and native JavaScript modules. The visual direction, "Two-Ink Poster", borrows from screen-printed gig posters: black paper, light ink and a red plate printed slightly off register.
-
-It features:
-
-- **Fretmaid**, my engineering thesis: an Android app for learning guitar with real-time audio analysis (Kotlin, Python, FastAPI, PostgreSQL).
-- A skills section grouped by real experience level, shown as floating bubbles.
-
-## Technical decisions
-
-- **No dependencies.** Every feature uses web platform APIs: CSS Grid and subgrid, fluid type with `clamp()`, View Transitions, scroll-driven animations, IntersectionObserver, ResizeObserver and the Clipboard API.
-- **Progressive enhancement.** Navigation, content and links work without JavaScript. Scripts only add behavior (mobile menu, copy email, header visibility, floating bubbles).
-- **Accessibility.** Semantic landmarks and headings, visible focus, skip link, 44px touch targets for navigation and actions, WCAG AA contrast, `prefers-reduced-motion` respected everywhere, and a pause control for continuous motion (WCAG 2.2.2).
-- **Performance.** Self-hosted, Latin-subset variable fonts with metric-matched fallbacks, animations limited to `transform`, `opacity` and `clip-path`, and motion loops that only run on screen.
-- **SEO.** Canonical URLs, Open Graph, structured data (JSON-LD), `sitemap.xml` and `robots.txt`.
-
-## Structure
-
-```
-├── index.html               Home
-├── projects/fretmaid/       Fretmaid case study
-├── 404.html                 Not found page (served by GitHub Pages)
-├── css/styles.css           Design tokens, layout and components
-├── js/main.js               Entry point (ES modules)
-├── js/modules/              One module per behavior
-└── assets/                  Fonts (with OFL licenses) and images
-```
+Emilio Carpio's frontend portfolio features Fretmaid, an Android guitar-learning app built for his engineering thesis. The case study follows the audio from microphone capture to pitch and chord recognition and describes Emilio's work on the Kotlin app and FastAPI backend. [Visit the portfolio](https://freakcarpio.github.io/)
 
 ## Run locally
 
-ES modules don't load from `file://`, so serve the folder:
+Use Node.js 24 and npm. From the repository root, run
 
+```sh
+npm ci
+npm run dev
 ```
-python -m http.server 8000
+
+Open the local address printed by Vite. The development toolbar switches between real content and fixtures for checking long text and missing media.
+
+## Preview the production site
+
+```sh
+npm run build
+npm run preview
 ```
 
-Then open http://localhost:8000.
+The build checks TypeScript, bundles the React app and generates HTML for the home page, the Fretmaid case study and the 404 page. Visitors can read the pages and follow links with JavaScript disabled. React adds the mobile menu, interactive guitar strings and clipboard control. GitHub Actions publishes the contents of `dist/` when changes reach `main` and the repository's Pages source is set to GitHub Actions.
 
-## Credits
+## Edit the portfolio
 
-- [Archivo](https://github.com/Omnibus-Type/Archivo) and [Martian Mono](https://github.com/evilmartians/mono), both under the SIL Open Font License 1.1.
+- `src/content/site.ts` contains the profile, project, skills and contact details. The root URL opens in English. Its Spanish counterpart at `/es/` uses the copy in `src/content/site.es.ts` and shares project assets and links.
+- `src/pages/` and `src/components/` contain the route views and shared interface. The browser and build use the route table in `src/routes.tsx`.
+- `src/styles/` contains the two-ink poster palette, typography, layouts and motion rules.
+- `public/assets/` holds the self-hosted fonts and images. The fonts ship with their SIL Open Font Licenses. [Archivo](https://github.com/Omnibus-Type/Archivo) · [Martian Mono](https://github.com/evilmartians/mono)
